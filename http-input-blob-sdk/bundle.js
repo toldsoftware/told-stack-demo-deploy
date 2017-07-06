@@ -78613,6 +78613,14 @@ module.exports = global.__run;
 
 "use strict";
 
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 const blobs_1 = __webpack_require__(116);
 // Http Request: Handle Update Request
@@ -78640,15 +78648,17 @@ function createFunctionJson(config) {
 }
 exports.createFunctionJson = createFunctionJson;
 function runFunction(config, context, req) {
-    // const data = context.bindings.inInputBlob;
-    const data = blobs_1.readBlob(context.bindingData.container, context.bindingData.blob);
-    context.res = {
-        body: data,
-        headers: {
-            'Content-Type': 'application/json'
-        }
-    };
-    context.done();
+    return __awaiter(this, void 0, void 0, function* () {
+        // const data = context.bindings.inInputBlob;
+        const data = yield blobs_1.readBlob(context.bindingData.container, context.bindingData.blob);
+        context.res = {
+            body: data,
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        };
+        context.done();
+    });
 }
 exports.runFunction = runFunction;
 ;
