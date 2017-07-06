@@ -112,8 +112,8 @@ function createFunctionJson(config) {
                 type: "table",
                 direction: "out",
                 tableName: config.outputTable_tableName,
-                partitionKey: config.outputTable_partitionKey,
-                rowKey: config.outputTable_rowKey,
+                // partitionKey: config.outputTable_partitionKey,
+                // rowKey: config.outputTable_rowKey,
                 connection: config.outputTable_connection
             },
         ],
@@ -122,7 +122,7 @@ function createFunctionJson(config) {
 }
 exports.createFunctionJson = createFunctionJson;
 function runFunction(config, context, req) {
-    const data = config.getDataFromRequest(req, context.bindingData);
+    const data = config.getTableRowDataFromRequest(req, context.bindingData);
     context.bindings.outOutputTable = data;
     // context.log('The Data was Queued', data);
     context.res = {
@@ -164,8 +164,12 @@ class Config {
         this.outputTable_rowKey = `{row}`;
         this.outputTable_connection = this.default_storageConnectionString_AppSettingName;
     }
-    getDataFromRequest(req, bindingData) {
-        return { value: req.body };
+    getTableRowDataFromRequest(req, bindingData) {
+        return {
+            PartitionKey: bindingData.partition,
+            RowKey: bindingData.row,
+            value: req.body
+        };
     }
 }
 exports.Config = Config;
