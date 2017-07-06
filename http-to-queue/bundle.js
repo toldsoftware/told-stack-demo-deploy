@@ -122,7 +122,7 @@ exports.createFunctionJson = createFunctionJson;
 function runFunction(config, context, req) {
     const data = config.getDataFromRequest(req, context.bindingData);
     context.bindings.outOutputQueue = data;
-    context.log('The Data was Queued', data);
+    // context.log('The Data was Queued', data);
     context.res = {
         body: 'The Data was Queued'
     };
