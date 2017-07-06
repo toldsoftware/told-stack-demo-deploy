@@ -212,8 +212,15 @@ function createFunctionJson(config) {
 }
 exports.createFunctionJson = createFunctionJson;
 function runFunction(config, context, req) {
+    context.log('START');
     const dataKey = config.getKeyFromRequest(req, context.bindingData);
-    const lookup = context.bindings.inLookupBlob;
+    let lookup = null;
+    try {
+        lookup = context.bindings.inLookupBlob;
+    }
+    catch (err) {
+        context.log('Lookup not found');
+    }
     // If the blob value is not stale
     // Return Current Blob Value with Long TTL
     const remainingTtl = lookup && lookup.startTime
