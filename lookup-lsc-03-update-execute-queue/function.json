@@ -1,0 +1,29 @@
+{
+ "bindings": [
+  {
+   "name": "inUpdateExecuteQueue",
+   "type": "queueTrigger",
+   "direction": "in",
+   "queueName": "lookup-lsc-update-execute-queue"
+  },
+  {
+   "name": "inoutRawDataBlob",
+   "type": "blob",
+   "direction": "inout",
+   "path": "{queueTrigger.containerName}/{queueTrigger.blobName}"
+  },
+  {
+   "name": "outDataDownloadBlob",
+   "type": "blob",
+   "direction": "out",
+   "path": "{queueTrigger.containerName}/{queueTrigger.blobName}/{queueTrigger.startTime}.gzip"
+  },
+  {
+   "name": "outLookupBlob",
+   "type": "blob",
+   "direction": "out",
+   "path": "{container}/{blob}/_lookup.txt"
+  }
+ ],
+ "disabled": false
+}
