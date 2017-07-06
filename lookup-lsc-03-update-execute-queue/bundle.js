@@ -107,20 +107,22 @@ class Config {
         this.dataRawBlob_connection = this.default_storageConnectionString_AppSettingName;
         this.dataDownloadBlob_connection = this.default_storageConnectionString_AppSettingName;
         // Function Template
-        this.http_route = this.apiRoutePath + '/{container}/{*blob}';
+        // Slash in blobName is not supported (i.e. {*blob}) because table partitionKey/rowKey cannot / in the name
+        // http_route = this.apiRoutePath + '/{container}/{*blob}';
+        this.http_route = this.apiRoutePath + '/{container}/{blob}';
         this.updateRequestQueue_queueName = 'lookup-lsc-update-request-queue';
         this.updateExecuteQueue_queueName = 'lookup-lsc-update-execute-queue';
         // These will encode to a url that receives parametes
         // Example: '{container}/{blob}/_lookup.txt'
         this.lookupBlob_path = `{container}/{blob}/_lookup.txt`;
         this.lookupTable_tableName = `blobaccess`;
-        this.lookupTable_partitionKey = `{container}/{blob}`;
+        this.lookupTable_partitionKey = `{container}_{blob}`;
         this.lookupTable_rowKey = `lookup`;
         this.changeTable_tableName = `blobaccess`;
-        this.changeTable_partitionKey = `{container}/{blob}`;
+        this.changeTable_partitionKey = `{container}_{blob}`;
         this.changeTable_rowKey = `change`;
         this.changeTable_tableName_fromQueueTrigger = `blobaccess`;
-        this.changeTable_partitionKey_fromQueueTrigger = `{queueTrigger.containerName}/{queueTrigger.blobName}`;
+        this.changeTable_partitionKey_fromQueueTrigger = `{queueTrigger.containerName}_{queueTrigger.blobName}`;
         this.changeTable_rowKey_fromQueueTrigger = `change`;
         this.dataRawBlob_path_fromQueueTrigger = `{queueTrigger.containerName}/{queueTrigger.blobName}`;
         this.dataDownloadBlob_path_fromQueueTriggerDate = `{queueTrigger.containerName}/{queueTrigger.blobName}/{queueTrigger.startTime}.gzip`;

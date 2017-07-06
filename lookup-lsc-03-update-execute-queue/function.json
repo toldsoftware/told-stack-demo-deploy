@@ -26,7 +26,7 @@
    "type": "blob",
    "direction": "out",
    "tableName": "blobaccess",
-   "partitionKey": "{container}/{blob}",
+   "partitionKey": "{container}_{blob}",
    "rowKey": "lookup",
    "connection": "AZURE_STORAGE_CONNECTION_STRING"
   }

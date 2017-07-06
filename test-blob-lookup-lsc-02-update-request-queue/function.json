@@ -12,7 +12,7 @@
    "type": "blob",
    "direction": "inout",
    "tableName": "blobaccess",
-   "partitionKey": "{queueTrigger.containerName}/{queueTrigger.blobName}",
+   "partitionKey": "{queueTrigger.containerName}_{queueTrigger.blobName}",
    "rowKey": "change",
    "connection": "AZURE_STORAGE_CONNECTION_STRING"
   },
