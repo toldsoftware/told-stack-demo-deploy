@@ -71,9 +71,10 @@
 
 Object.defineProperty(exports, "__esModule", { value: true });
 class Config {
-    constructor(obtainBlobData, apiRoutePath = 'api/lookup-lsc') {
+    constructor(obtainBlobData, apiRoutePath = 'api/lookup-lsc', default_storageConnectionString_AppSettingName = 'AZURE_STORAGE_CONNECTION_STRING') {
         this.obtainBlobData = obtainBlobData;
         this.apiRoutePath = apiRoutePath;
+        this.default_storageConnectionString_AppSettingName = default_storageConnectionString_AppSettingName;
         this.timeToLiveSeconds = 60;
         this.timeExtendSeconds = 10;
         this.timeExecutionSeconds = 10;
@@ -81,6 +82,12 @@ class Config {
         this.maxPollCount = 3;
         this.domain = '/';
         this.blobProxyRoutePath = 'blob';
+        this.lookupBlob_connection = this.default_storageConnectionString_AppSettingName;
+        this.updateRequestQueue_connection = this.default_storageConnectionString_AppSettingName;
+        this.updateExecuteQueue_connection = this.default_storageConnectionString_AppSettingName;
+        this.changeBlob_connection = this.default_storageConnectionString_AppSettingName;
+        this.dataRawBlob_connection = this.default_storageConnectionString_AppSettingName;
+        this.dataDownloadBlob_connection = this.default_storageConnectionString_AppSettingName;
         // Function Template
         this.http_route = this.apiRoutePath + '/{container}/{blob}';
         this.updateRequestQueue_queueName = 'lookup-lsc-update-request-queue';
@@ -168,13 +175,15 @@ function createFunctionJson(config) {
                 name: "inLookupBlob",
                 type: "blob",
                 direction: "in",
-                path: config.lookupBlob_path
+                path: config.lookupBlob_path,
+                connection: config.lookupBlob_connection
             },
             {
                 name: "outUpdateRequestQueue",
                 type: "queue",
                 direction: "out",
-                queueName: config.updateRequestQueue_queueName
+                queueName: config.updateRequestQueue_queueName,
+                connection: config.updateRequestQueue_connection
             },
         ],
         disabled: false

@@ -112,7 +112,7 @@ function createFunctionJson(config) {
                 type: "blob",
                 direction: "out",
                 path: config.outputBlob_path,
-                connection: "AZURE_STORAGE_CONNECTION_STRING"
+                connection: config.outputBlob_connection
             },
         ],
         disabled: false

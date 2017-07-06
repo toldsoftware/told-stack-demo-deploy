@@ -112,7 +112,7 @@ function createFunctionJson(config) {
                 type: "queue",
                 direction: "out",
                 queueName: config.outputQueue_queueName,
-                connection: "AZURE_STORAGE_CONNECTION_STRING"
+                connection: config.outputQueue_connection
             },
         ],
         disabled: false

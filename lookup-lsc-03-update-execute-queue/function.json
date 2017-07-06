@@ -4,25 +4,29 @@
    "name": "inUpdateExecuteQueue",
    "type": "queueTrigger",
    "direction": "in",
-   "queueName": "lookup-lsc-update-execute-queue"
+   "queueName": "lookup-lsc-update-execute-queue",
+   "connection": "AZURE_STORAGE_CONNECTION_STRING"
   },
   {
    "name": "inoutRawDataBlob",
    "type": "blob",
    "direction": "inout",
-   "path": "{queueTrigger.containerName}/{queueTrigger.blobName}"
+   "path": "{queueTrigger.containerName}/{queueTrigger.blobName}",
+   "connection": "AZURE_STORAGE_CONNECTION_STRING"
   },
   {
    "name": "outDataDownloadBlob",
    "type": "blob",
    "direction": "out",
-   "path": "{queueTrigger.containerName}/{queueTrigger.blobName}/{queueTrigger.startTime}.gzip"
+   "path": "{queueTrigger.containerName}/{queueTrigger.blobName}/{queueTrigger.startTime}.gzip",
+   "connection": "AZURE_STORAGE_CONNECTION_STRING"
   },
   {
    "name": "outLookupBlob",
    "type": "blob",
    "direction": "out",
-   "path": "{container}/{blob}/_lookup.txt"
+   "path": "{container}/{blob}/_lookup.txt",
+   "connection": "AZURE_STORAGE_CONNECTION_STRING"
   }
  ],
  "disabled": false

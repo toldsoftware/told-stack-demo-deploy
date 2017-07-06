@@ -71,9 +71,10 @@
 
 Object.defineProperty(exports, "__esModule", { value: true });
 class Config {
-    constructor(obtainBlobData, apiRoutePath = 'api/lookup-lsc') {
+    constructor(obtainBlobData, apiRoutePath = 'api/lookup-lsc', default_storageConnectionString_AppSettingName = 'AZURE_STORAGE_CONNECTION_STRING') {
         this.obtainBlobData = obtainBlobData;
         this.apiRoutePath = apiRoutePath;
+        this.default_storageConnectionString_AppSettingName = default_storageConnectionString_AppSettingName;
         this.timeToLiveSeconds = 60;
         this.timeExtendSeconds = 10;
         this.timeExecutionSeconds = 10;
@@ -81,6 +82,12 @@ class Config {
         this.maxPollCount = 3;
         this.domain = '/';
         this.blobProxyRoutePath = 'blob';
+        this.lookupBlob_connection = this.default_storageConnectionString_AppSettingName;
+        this.updateRequestQueue_connection = this.default_storageConnectionString_AppSettingName;
+        this.updateExecuteQueue_connection = this.default_storageConnectionString_AppSettingName;
+        this.changeBlob_connection = this.default_storageConnectionString_AppSettingName;
+        this.dataRawBlob_connection = this.default_storageConnectionString_AppSettingName;
+        this.dataDownloadBlob_connection = this.default_storageConnectionString_AppSettingName;
         // Function Template
         this.http_route = this.apiRoutePath + '/{container}/{blob}';
         this.updateRequestQueue_queueName = 'lookup-lsc-update-request-queue';
@@ -156,19 +163,22 @@ function createFunctionJson(config) {
                 name: "inUpdateRequestQueue",
                 type: "queueTrigger",
                 direction: "in",
-                queueName: config.updateRequestQueue_queueName
+                queueName: config.updateRequestQueue_queueName,
+                connection: config.updateRequestQueue_connection
             },
             {
                 name: "inoutChangeBlob",
                 type: "blob",
                 direction: "inout",
-                path: config.changeBlob_path_fromQueueTrigger
+                path: config.changeBlob_path_fromQueueTrigger,
+                connection: config.changeBlob_connection
             },
             {
                 name: "outUpdateExecuteQueue",
                 type: "queue",
                 direction: "out",
-                queueName: config.updateExecuteQueue_queueName
+                queueName: config.updateExecuteQueue_queueName,
+                connection: config.updateExecuteQueue_connection
             },
         ],
         disabled: false

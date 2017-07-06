@@ -16,13 +16,15 @@
    "name": "inLookupBlob",
    "type": "blob",
    "direction": "in",
-   "path": "{container}/{blob}/_lookup.txt"
+   "path": "{container}/{blob}/_lookup.txt",
+   "connection": "AZURE_STORAGE_CONNECTION_STRING"
   },
   {
    "name": "outUpdateRequestQueue",
    "type": "queue",
    "direction": "out",
-   "queueName": "lookup-lsc-update-request-queue"
+   "queueName": "lookup-lsc-update-request-queue",
+   "connection": "AZURE_STORAGE_CONNECTION_STRING"
   }
  ],
  "disabled": false
