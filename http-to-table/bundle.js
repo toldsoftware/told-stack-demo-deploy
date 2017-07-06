@@ -165,9 +165,8 @@ class Config {
         this.outputTable_connection = this.default_storageConnectionString_AppSettingName;
     }
     getDataFromRequest(req, bindingData) {
-        return {
-            value: req.body
-        };
+        // Allow controlling property names directly
+        return req.body;
     }
 }
 exports.Config = Config;
