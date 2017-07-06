@@ -17,6 +17,8 @@
    "type": "table",
    "direction": "inout",
    "tableName": "{table}",
+   "partitionKey": "{partition}",
+   "rowKey": "{row}",
    "connection": "AZURE_STORAGE_CONNECTION_STRING"
   }
  ],
