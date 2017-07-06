@@ -13,8 +13,8 @@
    "direction": "out"
   },
   {
-   "name": "outOutputQueue",
-   "type": "queue",
+   "name": "outOutputTable",
+   "type": "table",
    "direction": "out",
    "tableName": "{table}",
    "partitionKey": "{partition}",
