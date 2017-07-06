@@ -60,21 +60,21 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 141);
+/******/ 	return __webpack_require__(__webpack_require__.s = 137);
 /******/ })
 /************************************************************************/
 /******/ ({
 
-/***/ 141:
+/***/ 137:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-const function_01_http_1 = __webpack_require__(142);
-const config_http_input_blob_1 = __webpack_require__(143);
+const function_01_http_1 = __webpack_require__(138);
+const config_http_to_table_1 = __webpack_require__(139);
 const run = function (...args) {
-    function_01_http_1.runFunction.apply(null, [config_http_input_blob_1.config, ...args]);
+    function_01_http_1.runFunction.apply(null, [config_http_to_table_1.config, ...args]);
 };
 global.__run = run;
 module.exports = global.__run;
@@ -82,7 +82,7 @@ module.exports = global.__run;
 
 /***/ }),
 
-/***/ 142:
+/***/ 138:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -108,11 +108,13 @@ function createFunctionJson(config) {
                 direction: "out"
             },
             {
-                name: "inInputBlob",
-                type: "blob",
-                direction: "in",
-                path: config.inputBlob_path,
-                connection: config.inputBlob_connection
+                name: "outOutputQueue",
+                type: "queue",
+                direction: "out",
+                tableName: config.outputTable_tableName,
+                partitionKey: config.outputTable_partitionKey,
+                rowKey: config.outputTable_rowKey,
+                connection: config.outputTable_connection
             },
         ],
         disabled: false
@@ -120,12 +122,11 @@ function createFunctionJson(config) {
 }
 exports.createFunctionJson = createFunctionJson;
 function runFunction(config, context, req) {
-    const data = context.bindings.inInputBlob;
+    const data = config.getDataFromRequest(req, context.bindingData);
+    context.bindings.outOutputQueue = data;
+    // context.log('The Data was Queued', data);
     context.res = {
-        body: data,
-        headers: {
-            'Content-Type': 'application/json'
-        }
+        body: 'The Data was Queued'
     };
     context.done();
 }
@@ -135,34 +136,36 @@ exports.runFunction = runFunction;
 
 /***/ }),
 
-/***/ 143:
+/***/ 139:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-const config_1 = __webpack_require__(144);
+const config_1 = __webpack_require__(140);
 exports.config = new config_1.Config();
 
 
 /***/ }),
 
-/***/ 144:
+/***/ 140:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
 class Config {
-    constructor(http_routeRoot = 'api/http-input-blob', default_storageConnectionString_AppSettingName = 'AZURE_STORAGE_CONNECTION_STRING') {
+    constructor(http_routeRoot = 'api/http-to-table', default_storageConnectionString_AppSettingName = 'AZURE_STORAGE_CONNECTION_STRING') {
         this.http_routeRoot = http_routeRoot;
         this.default_storageConnectionString_AppSettingName = default_storageConnectionString_AppSettingName;
-        this.http_route = this.http_routeRoot + '/{container}/{*blob}';
-        this.inputBlob_path = '{container}/{blob}';
-        this.inputBlob_connection = this.default_storageConnectionString_AppSettingName;
+        this.http_route = this.http_routeRoot + '/{table}/{partition}/{row}';
+        this.outputTable_tableName = `{table}`;
+        this.outputTable_partitionKey = `{partition}`;
+        this.outputTable_rowKey = `{row}`;
+        this.outputTable_connection = this.default_storageConnectionString_AppSettingName;
     }
     getDataFromRequest(req, bindingData) {
-        return { key: { container: bindingData.container, blob: bindingData.blob }, value: req.body };
+        return { key: bindingData.key, value: req.body };
     }
 }
 exports.Config = Config;
