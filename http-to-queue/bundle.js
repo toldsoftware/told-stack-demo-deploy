@@ -123,7 +123,7 @@ function runFunction(config, context, req) {
     const data = config.getDataFromRequest(req, context.bindingData);
     context.bindings.outOutputQueue = data;
     context.res = {
-        body: 'The Data was Queued'
+        body: 'The Data was Queued: ' + JSON.stringify(data)
     };
     context.done();
 }
