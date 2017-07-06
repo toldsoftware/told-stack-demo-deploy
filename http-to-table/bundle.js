@@ -166,7 +166,7 @@ class Config {
     }
     getDataFromRequest(req, bindingData) {
         // Allow controlling property names directly
-        return req.body;
+        return Object.assign({}, req.body);
     }
 }
 exports.Config = Config;
