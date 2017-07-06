@@ -156,7 +156,7 @@ class Config {
     constructor(http_routeRoot = 'api/http-to-queue', default_storageConnectionString_AppSettingName = 'AZURE_STORAGE_CONNECTION_STRING') {
         this.http_routeRoot = http_routeRoot;
         this.default_storageConnectionString_AppSettingName = default_storageConnectionString_AppSettingName;
-        this.http_route = this.http_routeRoot + '/{container}/{blob}';
+        this.http_route = this.http_routeRoot + '/{container}/{*blob}';
         this.outputBlob_path = '{container}/{blob}';
         this.outputBlob_connection = this.default_storageConnectionString_AppSettingName;
     }

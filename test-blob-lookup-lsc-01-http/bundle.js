@@ -89,7 +89,7 @@ class Config {
         this.dataRawBlob_connection = this.default_storageConnectionString_AppSettingName;
         this.dataDownloadBlob_connection = this.default_storageConnectionString_AppSettingName;
         // Function Template
-        this.http_route = this.apiRoutePath + '/{container}/{blob}';
+        this.http_route = this.apiRoutePath + '/{container}/{*blob}';
         this.updateRequestQueue_queueName = 'lookup-lsc-update-request-queue';
         this.updateExecuteQueue_queueName = 'lookup-lsc-update-execute-queue';
         // These will encode to a url that receives parametes

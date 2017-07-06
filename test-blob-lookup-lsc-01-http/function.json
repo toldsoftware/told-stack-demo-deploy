@@ -5,7 +5,7 @@
    "type": "httpTrigger",
    "direction": "in",
    "authLevel": "anonymous",
-   "route": "api/test-blob/{container}/{blob}"
+   "route": "api/test-blob/{container}/{*blob}"
   },
   {
    "name": "res",
