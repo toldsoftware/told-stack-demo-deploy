@@ -110,7 +110,7 @@ function createFunctionJson(config) {
             {
                 name: "outOutputTable",
                 type: "table",
-                direction: "out",
+                direction: "inout",
                 tableName: config.outputTable_tableName,
                 // partitionKey: config.outputTable_partitionKey,
                 // rowKey: config.outputTable_rowKey,
