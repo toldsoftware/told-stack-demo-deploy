@@ -161,7 +161,7 @@ class Config {
         this.outputBlob_connection = this.default_storageConnectionString_AppSettingName;
     }
     getDataFromRequest(req, bindingData) {
-        return { key: bindingData, value: req.body };
+        return { key: { container: bindingData.container, blob: bindingData.blob }, value: req.body };
     }
 }
 exports.Config = Config;
