@@ -195,7 +195,7 @@ function createFunctionJson(config) {
             {
                 name: "inLookupBlob",
                 type: "blob",
-                direction: "inout",
+                direction: "in",
                 path: config.lookupBlob_path,
                 connection: config.lookupBlob_connection
             },

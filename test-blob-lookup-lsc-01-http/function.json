@@ -15,7 +15,7 @@
   {
    "name": "inLookupBlob",
    "type": "blob",
-   "direction": "inout",
+   "direction": "in",
    "path": "{container}/{blob}/_lookup.txt",
    "connection": "AZURE_STORAGE_CONNECTION_STRING"
   },
