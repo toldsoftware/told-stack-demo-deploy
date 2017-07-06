@@ -16,7 +16,8 @@
    "name": "outOutputQueue",
    "type": "queue",
    "direction": "out",
-   "queueName": "http-to-queue-output-queue"
+   "queueName": "http-to-queue-output-queue",
+   "connection": "AZURE_STORAGE_CONNECTION_STRING"
   }
  ],
  "disabled": false

@@ -111,7 +111,8 @@ function createFunctionJson(config) {
                 name: "outOutputQueue",
                 type: "queue",
                 direction: "out",
-                queueName: config.outputQueue_queueName
+                queueName: config.outputQueue_queueName,
+                connection: "AZURE_STORAGE_CONNECTION_STRING"
             },
         ],
         disabled: false
@@ -151,10 +152,12 @@ exports.config = new config_1.Config('api/http-to-queue');
 
 Object.defineProperty(exports, "__esModule", { value: true });
 class Config {
-    constructor(http_routeRoot = 'api/http-to-queue') {
+    constructor(http_routeRoot = 'api/http-to-queue', default_storageConnectionString_AppSettingName = 'AZURE_STORAGE_CONNECTION_STRING') {
         this.http_routeRoot = http_routeRoot;
+        this.default_storageConnectionString_AppSettingName = default_storageConnectionString_AppSettingName;
         this.http_route = this.http_routeRoot + '/{key}';
         this.outputQueue_queueName = 'http-to-queue-output-queue';
+        this.outputQueue_connection = this.default_storageConnectionString_AppSettingName;
     }
     getDataFromRequest(req, bindingData) {
         return { key: bindingData.key, value: req.body };
