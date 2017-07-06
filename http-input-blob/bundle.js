@@ -60,21 +60,21 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 268);
+/******/ 	return __webpack_require__(__webpack_require__.s = 272);
 /******/ })
 /************************************************************************/
 /******/ ({
 
-/***/ 268:
+/***/ 272:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-const function_01_http_1 = __webpack_require__(269);
-const config_http_to_blob_1 = __webpack_require__(270);
+const function_01_http_1 = __webpack_require__(273);
+const config_http_input_blob_1 = __webpack_require__(274);
 const run = function (...args) {
-    function_01_http_1.runFunction.apply(null, [config_http_to_blob_1.config, ...args]);
+    function_01_http_1.runFunction.apply(null, [config_http_input_blob_1.config, ...args]);
 };
 global.__run = run;
 module.exports = global.__run;
@@ -82,7 +82,7 @@ module.exports = global.__run;
 
 /***/ }),
 
-/***/ 269:
+/***/ 273:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -108,11 +108,11 @@ function createFunctionJson(config) {
                 direction: "out"
             },
             {
-                name: "outOutputBlob",
+                name: "inInputBlob",
                 type: "blob",
-                direction: "out",
-                path: config.outputBlob_path,
-                connection: config.outputBlob_connection
+                direction: "in",
+                path: config.inputBlob_path,
+                connection: config.inputBlob_connection
             },
         ],
         disabled: false
@@ -120,11 +120,9 @@ function createFunctionJson(config) {
 }
 exports.createFunctionJson = createFunctionJson;
 function runFunction(config, context, req) {
-    const data = config.getDataFromRequest(req, context.bindingData);
-    context.bindings.outOutputBlob = data;
-    // context.log('The Data was Queued', data);
+    const data = context.bindings.inInputBlob;
     context.res = {
-        body: 'The Data was Stored'
+        body: data
     };
     context.done();
 }
@@ -134,31 +132,31 @@ exports.runFunction = runFunction;
 
 /***/ }),
 
-/***/ 270:
+/***/ 274:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-const config_1 = __webpack_require__(271);
+const config_1 = __webpack_require__(275);
 exports.config = new config_1.Config();
 
 
 /***/ }),
 
-/***/ 271:
+/***/ 275:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
 class Config {
-    constructor(http_routeRoot = 'api/http-to-blob', default_storageConnectionString_AppSettingName = 'AZURE_STORAGE_CONNECTION_STRING') {
+    constructor(http_routeRoot = 'api/http-input-blob', default_storageConnectionString_AppSettingName = 'AZURE_STORAGE_CONNECTION_STRING') {
         this.http_routeRoot = http_routeRoot;
         this.default_storageConnectionString_AppSettingName = default_storageConnectionString_AppSettingName;
         this.http_route = this.http_routeRoot + '/{container}/{*blob}';
-        this.outputBlob_path = '{container}/{blob}';
-        this.outputBlob_connection = this.default_storageConnectionString_AppSettingName;
+        this.inputBlob_path = '{container}/{blob}';
+        this.inputBlob_connection = this.default_storageConnectionString_AppSettingName;
     }
     getDataFromRequest(req, bindingData) {
         return { key: { container: bindingData.container, blob: bindingData.blob }, value: req.body };

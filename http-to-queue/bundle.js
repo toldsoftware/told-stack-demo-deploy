@@ -141,7 +141,7 @@ exports.runFunction = runFunction;
 
 Object.defineProperty(exports, "__esModule", { value: true });
 const config_1 = __webpack_require__(267);
-exports.config = new config_1.Config('api/http-to-queue');
+exports.config = new config_1.Config();
 
 
 /***/ }),

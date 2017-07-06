@@ -65,7 +65,7 @@
 /************************************************************************/
 /******/ ({
 
-/***/ 116:
+/***/ 251:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -79,7 +79,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const config_1 = __webpack_require__(37);
+const config_1 = __webpack_require__(68);
 exports.config = new config_1.Config(() => __awaiter(this, void 0, void 0, function* () { return { data: 'TEST ' + new Date() }; }));
 
 
@@ -148,7 +148,7 @@ exports.runFunction = runFunction;
 
 Object.defineProperty(exports, "__esModule", { value: true });
 const function_02_update_request_queue_1 = __webpack_require__(255);
-const config_lookup_lsc_1 = __webpack_require__(116);
+const config_lookup_lsc_1 = __webpack_require__(251);
 const run = function (...args) {
     function_02_update_request_queue_1.runFunction.apply(null, [config_lookup_lsc_1.config, ...args]);
 };
@@ -158,7 +158,7 @@ module.exports = global.__run;
 
 /***/ }),
 
-/***/ 37:
+/***/ 68:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";

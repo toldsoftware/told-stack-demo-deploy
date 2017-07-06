@@ -65,20 +65,20 @@
 /************************************************************************/
 /******/ ({
 
-/***/ 117:
+/***/ 252:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-const config_1 = __webpack_require__(37);
-const obtain_test_blob_data_1 = __webpack_require__(118);
+const config_1 = __webpack_require__(68);
+const obtain_test_blob_data_1 = __webpack_require__(253);
 exports.config = new config_1.Config(obtain_test_blob_data_1.obtainTestBlobData, 'api/test-blob');
 
 
 /***/ }),
 
-/***/ 118:
+/***/ 253:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -171,7 +171,7 @@ exports.runFunction = runFunction;
 
 Object.defineProperty(exports, "__esModule", { value: true });
 const function_02_update_request_queue_1 = __webpack_require__(255);
-const config_test_blob_1 = __webpack_require__(117);
+const config_test_blob_1 = __webpack_require__(252);
 const run = function (...args) {
     function_02_update_request_queue_1.runFunction.apply(null, [config_test_blob_1.config, ...args]);
 };
@@ -181,7 +181,7 @@ module.exports = global.__run;
 
 /***/ }),
 
-/***/ 37:
+/***/ 68:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";

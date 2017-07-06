@@ -60,7 +60,7 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 261);
+/******/ 	return __webpack_require__(__webpack_require__.s = 276);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -17972,67 +17972,7 @@ module.exports = RangeStream;
 
 
 /***/ }),
-/* 68 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-class Config {
-    constructor(obtainBlobData, apiRoutePath = 'api/lookup-lsc', default_storageConnectionString_AppSettingName = 'AZURE_STORAGE_CONNECTION_STRING') {
-        this.obtainBlobData = obtainBlobData;
-        this.apiRoutePath = apiRoutePath;
-        this.default_storageConnectionString_AppSettingName = default_storageConnectionString_AppSettingName;
-        this.timeToLiveSeconds = 60;
-        this.timeExtendSeconds = 10;
-        this.timeExecutionSeconds = 10;
-        this.timePollSeconds = 15;
-        this.maxPollCount = 3;
-        this.domain = '/';
-        this.blobProxyRoutePath = 'blob';
-        this.lookupBlob_connection = this.default_storageConnectionString_AppSettingName;
-        this.updateRequestQueue_connection = this.default_storageConnectionString_AppSettingName;
-        this.updateExecuteQueue_connection = this.default_storageConnectionString_AppSettingName;
-        this.changeBlob_connection = this.default_storageConnectionString_AppSettingName;
-        this.dataRawBlob_connection = this.default_storageConnectionString_AppSettingName;
-        this.dataDownloadBlob_connection = this.default_storageConnectionString_AppSettingName;
-        // Function Template
-        this.http_route = this.apiRoutePath + '/{container}/{*blob}';
-        this.updateRequestQueue_queueName = 'lookup-lsc-update-request-queue';
-        this.updateExecuteQueue_queueName = 'lookup-lsc-update-execute-queue';
-        // These will encode to a url that receives parametes
-        // Example: '{container}/{blob}/_lookup.txt'
-        this.lookupBlob_path = `{container}/{blob}/_lookup.txt`;
-        this.changeBlob_path = `{container}/{blob}/changing`;
-        this.changeBlob_path_fromQueueTrigger = `{queueTrigger.containerName}/{queueTrigger.blobName}/changing`;
-        this.dataRawBlob_path_fromQueueTrigger = `{queueTrigger.containerName}/{queueTrigger.blobName}`;
-        this.dataDownloadBlob_path_fromQueueTriggerDate = `{queueTrigger.containerName}/{queueTrigger.blobName}/{queueTrigger.startTime}.gzip`;
-    }
-    getKeyFromRequest(req, bindingData) {
-        const d = bindingData;
-        return {
-            containerName: d.container,
-            blobName: d.blob,
-        };
-    }
-    getLookupUrl(key) {
-        return `${this.domain}/${this.apiRoutePath}/${key.containerName}/${key.blobName}`;
-    }
-    getDataDownloadUrl(key, lookup) {
-        return `${this.domain}/${this.blobProxyRoutePath}/${key.containerName}/${this.getDataDownloadBlobName(key.blobName, lookup)}`;
-    }
-    getLookupBlobName(blobName) {
-        return `${blobName}/_lookup.txt`;
-    }
-    getDataDownloadBlobName(blobName, lookup) {
-        // TODO: Test if works with .ext and switch to underscore if needed
-        return `${blobName}/${lookup.startTime}.gzip`;
-    }
-}
-exports.Config = Config;
-//# sourceMappingURL=config.js.map
-
-/***/ }),
+/* 68 */,
 /* 69 */
 /***/ (function(module, exports) {
 
@@ -78628,60 +78568,51 @@ exports.asyncIt = asyncIt;
 
 /***/ }),
 /* 251 */,
-/* 252 */
+/* 252 */,
+/* 253 */,
+/* 254 */,
+/* 255 */,
+/* 256 */,
+/* 257 */,
+/* 258 */,
+/* 259 */,
+/* 260 */,
+/* 261 */,
+/* 262 */,
+/* 263 */,
+/* 264 */,
+/* 265 */,
+/* 266 */,
+/* 267 */,
+/* 268 */,
+/* 269 */,
+/* 270 */,
+/* 271 */,
+/* 272 */,
+/* 273 */,
+/* 274 */,
+/* 275 */,
+/* 276 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-const config_1 = __webpack_require__(68);
-const obtain_test_blob_data_1 = __webpack_require__(253);
-exports.config = new config_1.Config(obtain_test_blob_data_1.obtainTestBlobData, 'api/test-blob');
+const function_01_http_1 = __webpack_require__(277);
+const config_http_input_blob_sdk_1 = __webpack_require__(278);
+const run = function (...args) {
+    function_01_http_1.runFunction.apply(null, [config_http_input_blob_sdk_1.config, ...args]);
+};
+global.__run = run;
+module.exports = global.__run;
 
 
 /***/ }),
-/* 253 */
+/* 277 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-function obtainTestBlobData(oldBlob, key) {
-    return __awaiter(this, void 0, void 0, function* () {
-        return {
-            data: {
-                key,
-                time: new Date(),
-                oldBlob
-            }
-        };
-    });
-}
-exports.obtainTestBlobData = obtainTestBlobData;
-
-
-/***/ }),
-/* 254 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 const blobs_1 = __webpack_require__(116);
 // Http Request: Handle Update Request
@@ -78703,98 +78634,55 @@ function createFunctionJson(config) {
                 type: "http",
                 direction: "out"
             },
-            // Input Blobs Binding doesn't work if it may not exist
-            // {
-            //     name: "inLookupBlob",
-            //     type: "blob",
-            //     direction: "in",
-            //     path: config.lookupBlob_path,
-            //     connection: config.lookupBlob_connection
-            // },
-            {
-                name: "outUpdateRequestQueue",
-                type: "queue",
-                direction: "out",
-                queueName: config.updateRequestQueue_queueName,
-                connection: config.updateRequestQueue_connection
-            },
         ],
         disabled: false
     };
 }
 exports.createFunctionJson = createFunctionJson;
 function runFunction(config, context, req) {
-    return __awaiter(this, void 0, void 0, function* () {
-        context.log('START');
-        const dataKey = config.getKeyFromRequest(req, context.bindingData);
-        // const lookup = context.bindings.inLookupBlob;
-        const lookup = yield blobs_1.readBlob(dataKey.containerName, config.getLookupBlobName(dataKey.blobName));
-        context.log('Lookup', { lookup });
-        // If the blob value is not stale
-        // Return Current Blob Value with Long TTL
-        const remainingTtl = lookup && lookup.startTime
-            && (lookup.startTime + config.timeToLiveSeconds * 1000 - Date.now());
-        if (remainingTtl > 0) {
-            // Return Old Lookup (Long TTL)
-            context.res = {
-                body: lookup,
-                headers: {
-                    'Cache-Control': `public, max-age=${remainingTtl}`
-                }
-            };
-            context.done();
-            return;
-        }
-        // Set Update Request Queue
-        context.bindings.outUpdateRequestQueue = Object.assign({}, dataKey, { startTime: Date.now() });
-        // Return Current Blob Value with Short TTL
-        if (!lookup) {
-            // Deal with missing lookup (First time request?)
-            context.res = {
-                status: 400,
-                body: `Not Ready Yet: Try again in ${config.timePollSeconds} Seconds`,
-                headers: {
-                    'Cache-Control': `public, max-age=${config.timeExtendSeconds}`
-                }
-            };
-            context.done();
-            return;
-        }
-        // Return Old Lookup (Short)
-        context.res = {
-            body: lookup,
-            headers: {
-                'Cache-Control': `public, max-age=${config.timeExtendSeconds}`
-            }
-        };
-        context.done();
-    });
+    // const data = context.bindings.inInputBlob;
+    const data = blobs_1.readBlob(context.bindingData.container, context.bindingData.blob);
+    context.res = {
+        body: data
+    };
+    context.done();
 }
 exports.runFunction = runFunction;
 ;
 //# sourceMappingURL=function-01-http.js.map
 
 /***/ }),
-/* 255 */,
-/* 256 */,
-/* 257 */,
-/* 258 */,
-/* 259 */,
-/* 260 */,
-/* 261 */
+/* 278 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-const function_01_http_1 = __webpack_require__(254);
-const config_test_blob_1 = __webpack_require__(252);
-const run = function (...args) {
-    function_01_http_1.runFunction.apply(null, [config_test_blob_1.config, ...args]);
-};
-global.__run = run;
-module.exports = global.__run;
+const config_1 = __webpack_require__(279);
+exports.config = new config_1.Config();
 
+
+/***/ }),
+/* 279 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+class Config {
+    constructor(http_routeRoot = 'api/http-input-blob-sdk', default_storageConnectionString_AppSettingName = 'AZURE_STORAGE_CONNECTION_STRING') {
+        this.http_routeRoot = http_routeRoot;
+        this.default_storageConnectionString_AppSettingName = default_storageConnectionString_AppSettingName;
+        this.http_route = this.http_routeRoot + '/{container}/{*blob}';
+        this.inputBlob_path = '{container}/{blob}';
+        this.inputBlob_connection = this.default_storageConnectionString_AppSettingName;
+    }
+    getDataFromRequest(req, bindingData) {
+        return { key: { container: bindingData.container, blob: bindingData.blob }, value: req.body };
+    }
+}
+exports.Config = Config;
+//# sourceMappingURL=config.js.map
 
 /***/ })
 /******/ ]);
