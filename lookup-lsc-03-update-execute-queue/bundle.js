@@ -71,15 +71,15 @@
 
 Object.defineProperty(exports, "__esModule", { value: true });
 class Config {
-    constructor(obtainBlobData) {
+    constructor(obtainBlobData, apiRoutePath = 'api/lookup-lsc') {
         this.obtainBlobData = obtainBlobData;
+        this.apiRoutePath = apiRoutePath;
         this.timeToLiveSeconds = 60;
         this.timeExtendSeconds = 10;
         this.timeExecutionSeconds = 10;
         this.timePollSeconds = 15;
         this.maxPollCount = 3;
         this.domain = '/';
-        this.apiRoutePath = 'api/lookup-lsc';
         this.blobProxyRoutePath = 'blob';
         // Function Template
         this.http_route = this.apiRoutePath + '/{container}/{blob}';

@@ -71,15 +71,15 @@
 
 Object.defineProperty(exports, "__esModule", { value: true });
 class Config {
-    constructor(obtainBlobData) {
+    constructor(obtainBlobData, apiRoutePath = 'api/lookup-lsc') {
         this.obtainBlobData = obtainBlobData;
+        this.apiRoutePath = apiRoutePath;
         this.timeToLiveSeconds = 60;
         this.timeExtendSeconds = 10;
         this.timeExecutionSeconds = 10;
         this.timePollSeconds = 15;
         this.maxPollCount = 3;
         this.domain = '/';
-        this.apiRoutePath = 'api/lookup-lsc';
         this.blobProxyRoutePath = 'blob';
         // Function Template
         this.http_route = this.apiRoutePath + '/{container}/{blob}';
@@ -127,7 +127,7 @@ exports.Config = Config;
 Object.defineProperty(exports, "__esModule", { value: true });
 const config_1 = __webpack_require__(0);
 const obtain_test_blob_data_1 = __webpack_require__(3);
-exports.config = new config_1.Config(obtain_test_blob_data_1.obtainTestBlobData);
+exports.config = new config_1.Config(obtain_test_blob_data_1.obtainTestBlobData, 'api/test-blob');
 
 
 /***/ }),
