@@ -60,25 +60,111 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 262);
+/******/ 	return __webpack_require__(__webpack_require__.s = 127);
 /******/ })
 /************************************************************************/
 /******/ ({
 
-/***/ 252:
+/***/ 127:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-const config_1 = __webpack_require__(68);
-const obtain_test_blob_data_1 = __webpack_require__(253);
+const function_02_update_request_queue_1 = __webpack_require__(54);
+const config_test_blob_1 = __webpack_require__(31);
+const run = function (...args) {
+    function_02_update_request_queue_1.runFunction.apply(null, [config_test_blob_1.config, ...args]);
+};
+global.__run = run;
+module.exports = global.__run;
+
+
+/***/ }),
+
+/***/ 13:
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+class Config {
+    constructor(obtainBlobData, apiRoutePath = 'api/lookup-lsc', default_storageConnectionString_AppSettingName = 'AZURE_STORAGE_CONNECTION_STRING') {
+        this.obtainBlobData = obtainBlobData;
+        this.apiRoutePath = apiRoutePath;
+        this.default_storageConnectionString_AppSettingName = default_storageConnectionString_AppSettingName;
+        this.timeToLiveSeconds = 60;
+        this.timeExtendSeconds = 10;
+        this.timeExecutionSeconds = 10;
+        this.timePollSeconds = 15;
+        this.maxPollCount = 3;
+        this.domain = '/';
+        this.blobProxyRoutePath = 'blob';
+        this.lookupBlob_connection = this.default_storageConnectionString_AppSettingName;
+        this.updateRequestQueue_connection = this.default_storageConnectionString_AppSettingName;
+        this.updateExecuteQueue_connection = this.default_storageConnectionString_AppSettingName;
+        this.changeTable_connection = this.default_storageConnectionString_AppSettingName;
+        this.dataRawBlob_connection = this.default_storageConnectionString_AppSettingName;
+        this.dataDownloadBlob_connection = this.default_storageConnectionString_AppSettingName;
+        // Function Template
+        this.http_route = this.apiRoutePath + '/{container}/{*blob}';
+        this.updateRequestQueue_queueName = 'lookup-lsc-update-request-queue';
+        this.updateExecuteQueue_queueName = 'lookup-lsc-update-execute-queue';
+        // These will encode to a url that receives parametes
+        // Example: '{container}/{blob}/_lookup.txt'
+        this.lookupBlob_path = `{container}/{blob}/_lookup.txt`;
+        this.lookupTable_tableName = `blobaccess`;
+        this.lookupTable_partitionKey = `{container}/{blob}`;
+        this.lookupTable_rowKey = `lookup`;
+        this.changeTable_tableName = `blobaccess`;
+        this.changeTable_partitionKey = `{container}/{blob}`;
+        this.changeTable_rowKey = `change`;
+        this.changeTable_tableName_fromQueueTrigger = `blobaccess`;
+        this.changeTable_partitionKey_fromQueueTrigger = `{queueTrigger.containerName}/{queueTrigger.blobName}`;
+        this.changeTable_rowKey_fromQueueTrigger = `change`;
+        this.dataRawBlob_path_fromQueueTrigger = `{queueTrigger.containerName}/{queueTrigger.blobName}`;
+        this.dataDownloadBlob_path_fromQueueTriggerDate = `{queueTrigger.containerName}/{queueTrigger.blobName}/{queueTrigger.startTime}.gzip`;
+    }
+    getKeyFromRequest(req, bindingData) {
+        const d = bindingData;
+        return {
+            containerName: d.container,
+            blobName: d.blob,
+        };
+    }
+    getLookupUrl(key) {
+        return `${this.domain}/${this.apiRoutePath}/${key.containerName}/${key.blobName}`;
+    }
+    getDataDownloadUrl(key, lookup) {
+        return `${this.domain}/${this.blobProxyRoutePath}/${key.containerName}/${this.getDataDownloadBlobName(key.blobName, lookup)}`;
+    }
+    getLookupBlobName(blobName) {
+        return `${blobName}/_lookup.txt`;
+    }
+    getDataDownloadBlobName(blobName, lookup) {
+        // TODO: Test if works with .ext and switch to underscore if needed
+        return `${blobName}/${lookup.startTime}.gzip`;
+    }
+}
+exports.Config = Config;
+//# sourceMappingURL=config.js.map
+
+/***/ }),
+
+/***/ 31:
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+const config_1 = __webpack_require__(13);
+const obtain_test_blob_data_1 = __webpack_require__(32);
 exports.config = new config_1.Config(obtain_test_blob_data_1.obtainTestBlobData, 'api/test-blob');
 
 
 /***/ }),
 
-/***/ 253:
+/***/ 32:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -108,14 +194,14 @@ exports.obtainTestBlobData = obtainTestBlobData;
 
 /***/ }),
 
-/***/ 255:
+/***/ 54:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
 // Queue Trigger: Update Request Queue
-// Blob In-Out: Changing Blob Singleton Check
+// Table In-Out: Changing Blob Singleton Check
 // Queue Out: Update Execute Queue Only Once Per Stale Timeout
 function createFunctionJson(config) {
     return {
@@ -128,11 +214,13 @@ function createFunctionJson(config) {
                 connection: config.updateRequestQueue_connection
             },
             {
-                name: "inoutChangeBlob",
+                name: "inoutChangeTable",
                 type: "blob",
                 direction: "inout",
-                path: config.changeBlob_path_fromQueueTrigger,
-                connection: config.changeBlob_connection
+                tableName: config.changeTable_tableName_fromQueueTrigger,
+                partitionKey: config.changeTable_partitionKey_fromQueueTrigger,
+                rowKey: config.changeTable_rowKey_fromQueueTrigger,
+                connection: config.changeTable_connection
             },
             {
                 name: "outUpdateExecuteQueue",
@@ -141,105 +229,38 @@ function createFunctionJson(config) {
                 queueName: config.updateExecuteQueue_queueName,
                 connection: config.updateExecuteQueue_connection
             },
+            // BUG FIX: To Prevent inout RawDataBlob from crashing next step if it doesn't exist
+            {
+                name: "outRawDataBlob",
+                type: "blob",
+                direction: "out",
+                path: config.dataRawBlob_path_fromQueueTrigger,
+                connection: config.dataRawBlob_connection,
+            },
         ],
         disabled: false
     };
 }
 exports.createFunctionJson = createFunctionJson;
 function runFunction(config, context) {
-    if (context.bindings.inoutChangeBlob
-        && context.bindings.inoutChangeBlob.startTime
-        && context.bindingData.insertionTime.getTime() < context.bindings.inoutChangeBlob.startTime + config.timeExecutionSeconds * 1000) {
+    // BUG FIX: To Prevent inout RawDataBlob from crashing next step if it doesn't exist
+    if (!context.bindings.inoutChangeTable) {
+        context.bindings.outRawDataBlob = {};
+    }
+    if (context.bindings.inoutChangeTable
+        && context.bindings.inoutChangeTable.startTime
+        && context.bindingData.insertionTime.getTime() < context.bindings.inoutChangeTable.startTime + config.timeExecutionSeconds * 1000) {
         // The update is already executing, don't do anything
         context.done();
         return;
     }
     // Queue Execute Update
-    context.bindings.inoutChangeBlob = { startTime: Date.now() };
+    context.bindings.inoutChangeTable = { startTime: Date.now() };
     context.bindings.outUpdateExecuteQueue = context.bindings.inUpdateRequestQueue;
     context.done();
 }
 exports.runFunction = runFunction;
 //# sourceMappingURL=function-02-update-request-queue.js.map
-
-/***/ }),
-
-/***/ 262:
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-const function_02_update_request_queue_1 = __webpack_require__(255);
-const config_test_blob_1 = __webpack_require__(252);
-const run = function (...args) {
-    function_02_update_request_queue_1.runFunction.apply(null, [config_test_blob_1.config, ...args]);
-};
-global.__run = run;
-module.exports = global.__run;
-
-
-/***/ }),
-
-/***/ 68:
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-class Config {
-    constructor(obtainBlobData, apiRoutePath = 'api/lookup-lsc', default_storageConnectionString_AppSettingName = 'AZURE_STORAGE_CONNECTION_STRING') {
-        this.obtainBlobData = obtainBlobData;
-        this.apiRoutePath = apiRoutePath;
-        this.default_storageConnectionString_AppSettingName = default_storageConnectionString_AppSettingName;
-        this.timeToLiveSeconds = 60;
-        this.timeExtendSeconds = 10;
-        this.timeExecutionSeconds = 10;
-        this.timePollSeconds = 15;
-        this.maxPollCount = 3;
-        this.domain = '/';
-        this.blobProxyRoutePath = 'blob';
-        this.lookupBlob_connection = this.default_storageConnectionString_AppSettingName;
-        this.updateRequestQueue_connection = this.default_storageConnectionString_AppSettingName;
-        this.updateExecuteQueue_connection = this.default_storageConnectionString_AppSettingName;
-        this.changeBlob_connection = this.default_storageConnectionString_AppSettingName;
-        this.dataRawBlob_connection = this.default_storageConnectionString_AppSettingName;
-        this.dataDownloadBlob_connection = this.default_storageConnectionString_AppSettingName;
-        // Function Template
-        this.http_route = this.apiRoutePath + '/{container}/{*blob}';
-        this.updateRequestQueue_queueName = 'lookup-lsc-update-request-queue';
-        this.updateExecuteQueue_queueName = 'lookup-lsc-update-execute-queue';
-        // These will encode to a url that receives parametes
-        // Example: '{container}/{blob}/_lookup.txt'
-        this.lookupBlob_path = `{container}/{blob}/_lookup.txt`;
-        this.changeBlob_path = `{container}/{blob}/changing`;
-        this.changeBlob_path_fromQueueTrigger = `{queueTrigger.containerName}/{queueTrigger.blobName}/changing`;
-        this.dataRawBlob_path_fromQueueTrigger = `{queueTrigger.containerName}/{queueTrigger.blobName}`;
-        this.dataDownloadBlob_path_fromQueueTriggerDate = `{queueTrigger.containerName}/{queueTrigger.blobName}/{queueTrigger.startTime}.gzip`;
-    }
-    getKeyFromRequest(req, bindingData) {
-        const d = bindingData;
-        return {
-            containerName: d.container,
-            blobName: d.blob,
-        };
-    }
-    getLookupUrl(key) {
-        return `${this.domain}/${this.apiRoutePath}/${key.containerName}/${key.blobName}`;
-    }
-    getDataDownloadUrl(key, lookup) {
-        return `${this.domain}/${this.blobProxyRoutePath}/${key.containerName}/${this.getDataDownloadBlobName(key.blobName, lookup)}`;
-    }
-    getLookupBlobName(blobName) {
-        return `${blobName}/_lookup.txt`;
-    }
-    getDataDownloadBlobName(blobName, lookup) {
-        // TODO: Test if works with .ext and switch to underscore if needed
-        return `${blobName}/${lookup.startTime}.gzip`;
-    }
-}
-exports.Config = Config;
-//# sourceMappingURL=config.js.map
 
 /***/ })
 

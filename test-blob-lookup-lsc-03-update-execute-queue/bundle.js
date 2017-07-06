@@ -60,171 +60,19 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 263);
+/******/ 	return __webpack_require__(__webpack_require__.s = 128);
 /******/ })
 /************************************************************************/
 /******/ ({
 
-/***/ 252:
+/***/ 128:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-const config_1 = __webpack_require__(68);
-const obtain_test_blob_data_1 = __webpack_require__(253);
-exports.config = new config_1.Config(obtain_test_blob_data_1.obtainTestBlobData, 'api/test-blob');
-
-
-/***/ }),
-
-/***/ 253:
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-function obtainTestBlobData(oldBlob, key) {
-    return __awaiter(this, void 0, void 0, function* () {
-        return {
-            data: {
-                key,
-                time: new Date(),
-                oldBlob
-            }
-        };
-    });
-}
-exports.obtainTestBlobData = obtainTestBlobData;
-
-
-/***/ }),
-
-/***/ 256:
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-const gzip_1 = __webpack_require__(257);
-// Queue Trigger: Update Request Queue
-// Blob Out: Changing Blob
-// Blob In-Out: Data Blob
-// Blob Out: Lookup Blob
-function createFunctionJson(config) {
-    return {
-        bindings: [
-            {
-                name: "inUpdateExecuteQueue",
-                type: "queueTrigger",
-                direction: "in",
-                queueName: config.updateExecuteQueue_queueName,
-                connection: config.updateExecuteQueue_connection,
-            },
-            {
-                name: "inoutRawDataBlob",
-                type: "blob",
-                direction: "inout",
-                path: config.dataRawBlob_path_fromQueueTrigger,
-                connection: config.dataRawBlob_connection,
-            },
-            {
-                name: "outDataDownloadBlob",
-                type: "blob",
-                direction: "out",
-                path: config.dataDownloadBlob_path_fromQueueTriggerDate,
-                connection: config.dataDownloadBlob_connection,
-            },
-            // {
-            //     name: "outChangeBlob",
-            //     type: "blob",
-            //     direction: "out",
-            //     path: config.changeBlob_path_fromQueueTrigger,
-            //     connection: config.changeBlob_connection
-            // },
-            {
-                name: "outLookupBlob",
-                type: "blob",
-                direction: "out",
-                path: config.lookupBlob_path,
-                connection: config.lookupBlob_connection,
-            },
-        ],
-        disabled: false
-    };
-}
-exports.createFunctionJson = createFunctionJson;
-function runFunction(config, context) {
-    return __awaiter(this, void 0, void 0, function* () {
-        const blobData = yield config.obtainBlobData(context.bindings.inoutRawDataBlob, context.bindings.inUpdateExecuteQueue);
-        context.bindings.inoutRawDataBlob = blobData;
-        context.bindings.outDataDownloadBlob = yield gzip_1.gzipText(JSON.stringify(blobData));
-        // context.bindings.outChangeBlob = null;
-        context.bindings.outLookupBlob = { startTime: context.bindings.inUpdateExecuteQueue.startTime };
-        context.done();
-    });
-}
-exports.runFunction = runFunction;
-//# sourceMappingURL=function-03-update-execute-queue.js.map
-
-/***/ }),
-
-/***/ 257:
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-const zlib_1 = __webpack_require__(69);
-function gzipText(dataJson) {
-    return __awaiter(this, void 0, void 0, function* () {
-        return new Promise((resolve, reject) => {
-            zlib_1.gzip(dataJson, (err, res) => {
-                if (err) {
-                    reject(err);
-                }
-                resolve(res);
-            });
-        });
-    });
-}
-exports.gzipText = gzipText;
-//# sourceMappingURL=gzip.js.map
-
-/***/ }),
-
-/***/ 263:
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-const function_03_update_execute_queue_1 = __webpack_require__(256);
-const config_test_blob_1 = __webpack_require__(252);
+const function_03_update_execute_queue_1 = __webpack_require__(55);
+const config_test_blob_1 = __webpack_require__(31);
 const run = function (...args) {
     function_03_update_execute_queue_1.runFunction.apply(null, [config_test_blob_1.config, ...args]);
 };
@@ -234,7 +82,7 @@ module.exports = global.__run;
 
 /***/ }),
 
-/***/ 68:
+/***/ 13:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -255,7 +103,7 @@ class Config {
         this.lookupBlob_connection = this.default_storageConnectionString_AppSettingName;
         this.updateRequestQueue_connection = this.default_storageConnectionString_AppSettingName;
         this.updateExecuteQueue_connection = this.default_storageConnectionString_AppSettingName;
-        this.changeBlob_connection = this.default_storageConnectionString_AppSettingName;
+        this.changeTable_connection = this.default_storageConnectionString_AppSettingName;
         this.dataRawBlob_connection = this.default_storageConnectionString_AppSettingName;
         this.dataDownloadBlob_connection = this.default_storageConnectionString_AppSettingName;
         // Function Template
@@ -265,8 +113,15 @@ class Config {
         // These will encode to a url that receives parametes
         // Example: '{container}/{blob}/_lookup.txt'
         this.lookupBlob_path = `{container}/{blob}/_lookup.txt`;
-        this.changeBlob_path = `{container}/{blob}/changing`;
-        this.changeBlob_path_fromQueueTrigger = `{queueTrigger.containerName}/{queueTrigger.blobName}/changing`;
+        this.lookupTable_tableName = `blobaccess`;
+        this.lookupTable_partitionKey = `{container}/{blob}`;
+        this.lookupTable_rowKey = `lookup`;
+        this.changeTable_tableName = `blobaccess`;
+        this.changeTable_partitionKey = `{container}/{blob}`;
+        this.changeTable_rowKey = `change`;
+        this.changeTable_tableName_fromQueueTrigger = `blobaccess`;
+        this.changeTable_partitionKey_fromQueueTrigger = `{queueTrigger.containerName}/{queueTrigger.blobName}`;
+        this.changeTable_rowKey_fromQueueTrigger = `change`;
         this.dataRawBlob_path_fromQueueTrigger = `{queueTrigger.containerName}/{queueTrigger.blobName}`;
         this.dataDownloadBlob_path_fromQueueTriggerDate = `{queueTrigger.containerName}/{queueTrigger.blobName}/{queueTrigger.startTime}.gzip`;
     }
@@ -296,10 +151,156 @@ exports.Config = Config;
 
 /***/ }),
 
-/***/ 69:
+/***/ 30:
 /***/ (function(module, exports) {
 
 module.exports = require("zlib");
+
+/***/ }),
+
+/***/ 31:
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+const config_1 = __webpack_require__(13);
+const obtain_test_blob_data_1 = __webpack_require__(32);
+exports.config = new config_1.Config(obtain_test_blob_data_1.obtainTestBlobData, 'api/test-blob');
+
+
+/***/ }),
+
+/***/ 32:
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+function obtainTestBlobData(oldBlob, key) {
+    return __awaiter(this, void 0, void 0, function* () {
+        return {
+            data: {
+                key,
+                time: new Date(),
+                oldBlob
+            }
+        };
+    });
+}
+exports.obtainTestBlobData = obtainTestBlobData;
+
+
+/***/ }),
+
+/***/ 55:
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const gzip_1 = __webpack_require__(56);
+// Queue Trigger: Update Request Queue
+// Blob In-Out: Raw Data Blob
+// Blob Out: Download Data Blob
+// Table Out: Lookup Blob
+function createFunctionJson(config) {
+    return {
+        bindings: [
+            {
+                name: "inUpdateExecuteQueue",
+                type: "queueTrigger",
+                direction: "in",
+                queueName: config.updateExecuteQueue_queueName,
+                connection: config.updateExecuteQueue_connection,
+            },
+            {
+                name: "inoutRawDataBlob",
+                type: "blob",
+                direction: "inout",
+                path: config.dataRawBlob_path_fromQueueTrigger,
+                connection: config.dataRawBlob_connection,
+            },
+            {
+                name: "outDataDownloadBlob",
+                type: "blob",
+                direction: "out",
+                path: config.dataDownloadBlob_path_fromQueueTriggerDate,
+                connection: config.dataDownloadBlob_connection,
+            },
+            {
+                name: "outLookupTable",
+                type: "blob",
+                direction: "out",
+                tableName: config.lookupTable_tableName,
+                partitionKey: config.lookupTable_partitionKey,
+                rowKey: config.lookupTable_rowKey,
+                connection: config.lookupBlob_connection,
+            },
+        ],
+        disabled: false
+    };
+}
+exports.createFunctionJson = createFunctionJson;
+function runFunction(config, context) {
+    return __awaiter(this, void 0, void 0, function* () {
+        const blobData = yield config.obtainBlobData(context.bindings.inoutRawDataBlob, context.bindings.inUpdateExecuteQueue);
+        context.bindings.inoutRawDataBlob = blobData;
+        context.bindings.outDataDownloadBlob = yield gzip_1.gzipText(JSON.stringify(blobData));
+        context.bindings.outLookupTable = { startTime: context.bindings.inUpdateExecuteQueue.startTime };
+        context.done();
+    });
+}
+exports.runFunction = runFunction;
+//# sourceMappingURL=function-03-update-execute-queue.js.map
+
+/***/ }),
+
+/***/ 56:
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const zlib_1 = __webpack_require__(30);
+function gzipText(dataJson) {
+    return __awaiter(this, void 0, void 0, function* () {
+        return new Promise((resolve, reject) => {
+            zlib_1.gzip(dataJson, (err, res) => {
+                if (err) {
+                    reject(err);
+                }
+                resolve(res);
+            });
+        });
+    });
+}
+exports.gzipText = gzipText;
+//# sourceMappingURL=gzip.js.map
 
 /***/ })
 

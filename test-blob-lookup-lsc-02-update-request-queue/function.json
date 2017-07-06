@@ -8,10 +8,12 @@
    "connection": "AZURE_STORAGE_CONNECTION_STRING"
   },
   {
-   "name": "inoutChangeBlob",
+   "name": "inoutChangeTable",
    "type": "blob",
    "direction": "inout",
-   "path": "{queueTrigger.containerName}/{queueTrigger.blobName}/changing",
+   "tableName": "blobaccess",
+   "partitionKey": "{queueTrigger.containerName}/{queueTrigger.blobName}",
+   "rowKey": "change",
    "connection": "AZURE_STORAGE_CONNECTION_STRING"
   },
   {
@@ -19,6 +21,13 @@
    "type": "queue",
    "direction": "out",
    "queueName": "lookup-lsc-update-execute-queue",
+   "connection": "AZURE_STORAGE_CONNECTION_STRING"
+  },
+  {
+   "name": "outRawDataBlob",
+   "type": "blob",
+   "direction": "out",
+   "path": "{queueTrigger.containerName}/{queueTrigger.blobName}",
    "connection": "AZURE_STORAGE_CONNECTION_STRING"
   }
  ],

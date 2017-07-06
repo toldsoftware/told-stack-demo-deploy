@@ -22,10 +22,12 @@
    "connection": "AZURE_STORAGE_CONNECTION_STRING"
   },
   {
-   "name": "outLookupBlob",
+   "name": "outLookupTable",
    "type": "blob",
    "direction": "out",
-   "path": "{container}/{blob}/_lookup.txt",
+   "tableName": "blobaccess",
+   "partitionKey": "{container}/{blob}",
+   "rowKey": "lookup",
    "connection": "AZURE_STORAGE_CONNECTION_STRING"
   }
  ],

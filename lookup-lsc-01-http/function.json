@@ -13,6 +13,15 @@
    "direction": "out"
   },
   {
+   "name": "inLookupTable",
+   "type": "table",
+   "direction": "in",
+   "tableName": "blobaccess",
+   "partitionKey": "{container}/{blob}",
+   "rowKey": "lookup",
+   "connection": "AZURE_STORAGE_CONNECTION_STRING"
+  },
+  {
    "name": "outUpdateRequestQueue",
    "type": "queue",
    "direction": "out",
