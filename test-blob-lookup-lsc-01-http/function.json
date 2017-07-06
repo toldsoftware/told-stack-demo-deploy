@@ -13,13 +13,6 @@
    "direction": "out"
   },
   {
-   "name": "inLookupBlob",
-   "type": "blob",
-   "direction": "in",
-   "path": "{container}/{blob}/_lookup.txt",
-   "connection": "AZURE_STORAGE_CONNECTION_STRING"
-  },
-  {
    "name": "outUpdateRequestQueue",
    "type": "queue",
    "direction": "out",

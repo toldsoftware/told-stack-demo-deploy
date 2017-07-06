@@ -60,11 +60,105 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 10);
+/******/ 	return __webpack_require__(__webpack_require__.s = 259);
 /******/ })
 /************************************************************************/
-/******/ ([
-/* 0 */
+/******/ ({
+
+/***/ 116:
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const config_1 = __webpack_require__(37);
+exports.config = new config_1.Config(() => __awaiter(this, void 0, void 0, function* () { return { data: 'TEST ' + new Date() }; }));
+
+
+/***/ }),
+
+/***/ 255:
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+// Queue Trigger: Update Request Queue
+// Blob In-Out: Changing Blob Singleton Check
+// Queue Out: Update Execute Queue Only Once Per Stale Timeout
+function createFunctionJson(config) {
+    return {
+        bindings: [
+            {
+                name: "inUpdateRequestQueue",
+                type: "queueTrigger",
+                direction: "in",
+                queueName: config.updateRequestQueue_queueName,
+                connection: config.updateRequestQueue_connection
+            },
+            {
+                name: "inoutChangeBlob",
+                type: "blob",
+                direction: "inout",
+                path: config.changeBlob_path_fromQueueTrigger,
+                connection: config.changeBlob_connection
+            },
+            {
+                name: "outUpdateExecuteQueue",
+                type: "queue",
+                direction: "out",
+                queueName: config.updateExecuteQueue_queueName,
+                connection: config.updateExecuteQueue_connection
+            },
+        ],
+        disabled: false
+    };
+}
+exports.createFunctionJson = createFunctionJson;
+function runFunction(config, context) {
+    if (context.bindings.inoutChangeBlob
+        && context.bindings.inoutChangeBlob.startTime
+        && context.bindingData.insertionTime.getTime() < context.bindings.inoutChangeBlob.startTime + config.timeExecutionSeconds * 1000) {
+        // The update is already executing, don't do anything
+        context.done();
+        return;
+    }
+    // Queue Execute Update
+    context.bindings.inoutChangeBlob = { startTime: Date.now() };
+    context.bindings.outUpdateExecuteQueue = context.bindings.inUpdateRequestQueue;
+    context.done();
+}
+exports.runFunction = runFunction;
+//# sourceMappingURL=function-02-update-request-queue.js.map
+
+/***/ }),
+
+/***/ 259:
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+const function_02_update_request_queue_1 = __webpack_require__(255);
+const config_lookup_lsc_1 = __webpack_require__(116);
+const run = function (...args) {
+    function_02_update_request_queue_1.runFunction.apply(null, [config_lookup_lsc_1.config, ...args]);
+};
+global.__run = run;
+module.exports = global.__run;
+
+
+/***/ }),
+
+/***/ 37:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -124,102 +218,6 @@ class Config {
 exports.Config = Config;
 //# sourceMappingURL=config.js.map
 
-/***/ }),
-/* 1 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-const config_1 = __webpack_require__(0);
-exports.config = new config_1.Config(() => __awaiter(this, void 0, void 0, function* () { return { data: 'TEST ' + new Date() }; }));
-
-
-/***/ }),
-/* 2 */,
-/* 3 */,
-/* 4 */,
-/* 5 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-// Queue Trigger: Update Request Queue
-// Blob In-Out: Changing Blob Singleton Check
-// Queue Out: Update Execute Queue Only Once Per Stale Timeout
-function createFunctionJson(config) {
-    return {
-        bindings: [
-            {
-                name: "inUpdateRequestQueue",
-                type: "queueTrigger",
-                direction: "in",
-                queueName: config.updateRequestQueue_queueName,
-                connection: config.updateRequestQueue_connection
-            },
-            {
-                name: "inoutChangeBlob",
-                type: "blob",
-                direction: "inout",
-                path: config.changeBlob_path_fromQueueTrigger,
-                connection: config.changeBlob_connection
-            },
-            {
-                name: "outUpdateExecuteQueue",
-                type: "queue",
-                direction: "out",
-                queueName: config.updateExecuteQueue_queueName,
-                connection: config.updateExecuteQueue_connection
-            },
-        ],
-        disabled: false
-    };
-}
-exports.createFunctionJson = createFunctionJson;
-function runFunction(config, context) {
-    if (context.bindings.inoutChangeBlob
-        && context.bindings.inoutChangeBlob.startTime
-        && context.bindingData.insertionTime.getTime() < context.bindings.inoutChangeBlob.startTime + config.timeExecutionSeconds * 1000) {
-        // The update is already executing, don't do anything
-        context.done();
-        return;
-    }
-    // Queue Execute Update
-    context.bindings.inoutChangeBlob = { startTime: Date.now() };
-    context.bindings.outUpdateExecuteQueue = context.bindings.inUpdateRequestQueue;
-    context.done();
-}
-exports.runFunction = runFunction;
-//# sourceMappingURL=function-02-update-request-queue.js.map
-
-/***/ }),
-/* 6 */,
-/* 7 */,
-/* 8 */,
-/* 9 */,
-/* 10 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-const function_02_update_request_queue_1 = __webpack_require__(5);
-const config_lookup_lsc_1 = __webpack_require__(1);
-const run = function (...args) {
-    function_02_update_request_queue_1.runFunction.apply(null, [config_lookup_lsc_1.config, ...args]);
-};
-global.__run = run;
-module.exports = global.__run;
-
-
 /***/ })
-/******/ ]);
+
+/******/ });
