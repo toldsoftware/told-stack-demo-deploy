@@ -124,7 +124,7 @@ exports.createFunctionJson = createFunctionJson;
 function runFunction(config, context, req) {
     const data = context.bindings.inInputTable;
     context.res = {
-        body: data
+        body: { data }
     };
     context.done();
 }

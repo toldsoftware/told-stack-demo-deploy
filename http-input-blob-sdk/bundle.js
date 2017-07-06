@@ -78643,7 +78643,7 @@ function runFunction(config, context, req) {
     // const data = context.bindings.inInputBlob;
     const data = blobs_1.readBlob(context.bindingData.container, context.bindingData.blob);
     context.res = {
-        body: data
+        body: { data }
     };
     context.done();
 }
