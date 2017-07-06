@@ -124,7 +124,10 @@ exports.createFunctionJson = createFunctionJson;
 function runFunction(config, context, req) {
     const data = context.bindings.inInputTable;
     context.res = {
-        body: { data }
+        body: data,
+        headers: {
+            'Content-Type': 'application/json'
+        }
     };
     context.done();
 }
