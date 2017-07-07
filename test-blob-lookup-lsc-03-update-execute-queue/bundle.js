@@ -60,19 +60,122 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 128);
+/******/ 	return __webpack_require__(__webpack_require__.s = 262);
 /******/ })
 /************************************************************************/
 /******/ ({
 
-/***/ 128:
+/***/ 121:
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const gzip_1 = __webpack_require__(122);
+// Queue Trigger: Update Request Queue
+// Blob In-Out: Raw Data Blob
+// Blob Out: Download Data Blob
+// Table Out: Lookup Blob
+function createFunctionJson(config) {
+    return {
+        bindings: [
+            {
+                name: "inUpdateExecuteQueue",
+                type: "queueTrigger",
+                direction: "in",
+                queueName: config.updateExecuteQueue_queueName,
+                connection: config.updateExecuteQueue_connection,
+            },
+            {
+                name: "inoutRawDataBlob",
+                type: "blob",
+                direction: "inout",
+                path: config.dataRawBlob_path_fromQueueTrigger,
+                connection: config.dataRawBlob_connection,
+            },
+            {
+                name: "outDataDownloadBlob",
+                type: "blob",
+                direction: "out",
+                path: config.dataDownloadBlob_path_fromQueueTriggerDate,
+                connection: config.dataDownloadBlob_connection,
+            },
+            {
+                name: "outLookupTable",
+                type: "blob",
+                direction: "out",
+                tableName: config.lookupTable_tableName,
+                partitionKey: config.lookupTable_partitionKey,
+                rowKey: config.lookupTable_rowKey,
+                connection: config.lookupBlob_connection,
+            },
+        ],
+        disabled: false
+    };
+}
+exports.createFunctionJson = createFunctionJson;
+function runFunction(config, context) {
+    return __awaiter(this, void 0, void 0, function* () {
+        const blobData = yield config.obtainBlobData(context.bindings.inoutRawDataBlob, context.bindings.inUpdateExecuteQueue);
+        context.bindings.inoutRawDataBlob = blobData;
+        context.bindings.outDataDownloadBlob = yield gzip_1.gzipText(JSON.stringify(blobData));
+        context.bindings.outLookupTable = { startTime: context.bindings.inUpdateExecuteQueue.startTime };
+        context.done();
+    });
+}
+exports.runFunction = runFunction;
+//# sourceMappingURL=function-03-update-execute-queue.js.map
+
+/***/ }),
+
+/***/ 122:
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const zlib_1 = __webpack_require__(49);
+function gzipText(dataJson) {
+    return __awaiter(this, void 0, void 0, function* () {
+        return new Promise((resolve, reject) => {
+            zlib_1.gzip(dataJson, (err, res) => {
+                if (err) {
+                    reject(err);
+                }
+                resolve(res);
+            });
+        });
+    });
+}
+exports.gzipText = gzipText;
+//# sourceMappingURL=gzip.js.map
+
+/***/ }),
+
+/***/ 262:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-const function_03_update_execute_queue_1 = __webpack_require__(55);
-const config_test_blob_1 = __webpack_require__(31);
+const function_03_update_execute_queue_1 = __webpack_require__(121);
+const config_test_blob_1 = __webpack_require__(71);
 const run = function (...args) {
     function_03_update_execute_queue_1.runFunction.apply(null, [config_test_blob_1.config, ...args]);
 };
@@ -82,7 +185,7 @@ module.exports = global.__run;
 
 /***/ }),
 
-/***/ 13:
+/***/ 28:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -153,27 +256,27 @@ exports.Config = Config;
 
 /***/ }),
 
-/***/ 30:
+/***/ 49:
 /***/ (function(module, exports) {
 
 module.exports = require("zlib");
 
 /***/ }),
 
-/***/ 31:
+/***/ 71:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-const config_1 = __webpack_require__(13);
-const obtain_test_blob_data_1 = __webpack_require__(32);
+const config_1 = __webpack_require__(28);
+const obtain_test_blob_data_1 = __webpack_require__(72);
 exports.config = new config_1.Config(obtain_test_blob_data_1.obtainTestBlobData, 'api/test-blob');
 
 
 /***/ }),
 
-/***/ 32:
+/***/ 72:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -200,109 +303,6 @@ function obtainTestBlobData(oldBlob, key) {
 }
 exports.obtainTestBlobData = obtainTestBlobData;
 
-
-/***/ }),
-
-/***/ 55:
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-const gzip_1 = __webpack_require__(56);
-// Queue Trigger: Update Request Queue
-// Blob In-Out: Raw Data Blob
-// Blob Out: Download Data Blob
-// Table Out: Lookup Blob
-function createFunctionJson(config) {
-    return {
-        bindings: [
-            {
-                name: "inUpdateExecuteQueue",
-                type: "queueTrigger",
-                direction: "in",
-                queueName: config.updateExecuteQueue_queueName,
-                connection: config.updateExecuteQueue_connection,
-            },
-            {
-                name: "inoutRawDataBlob",
-                type: "blob",
-                direction: "inout",
-                path: config.dataRawBlob_path_fromQueueTrigger,
-                connection: config.dataRawBlob_connection,
-            },
-            {
-                name: "outDataDownloadBlob",
-                type: "blob",
-                direction: "out",
-                path: config.dataDownloadBlob_path_fromQueueTriggerDate,
-                connection: config.dataDownloadBlob_connection,
-            },
-            {
-                name: "outLookupTable",
-                type: "blob",
-                direction: "out",
-                tableName: config.lookupTable_tableName,
-                partitionKey: config.lookupTable_partitionKey,
-                rowKey: config.lookupTable_rowKey,
-                connection: config.lookupBlob_connection,
-            },
-        ],
-        disabled: false
-    };
-}
-exports.createFunctionJson = createFunctionJson;
-function runFunction(config, context) {
-    return __awaiter(this, void 0, void 0, function* () {
-        const blobData = yield config.obtainBlobData(context.bindings.inoutRawDataBlob, context.bindings.inUpdateExecuteQueue);
-        context.bindings.inoutRawDataBlob = blobData;
-        context.bindings.outDataDownloadBlob = yield gzip_1.gzipText(JSON.stringify(blobData));
-        context.bindings.outLookupTable = { startTime: context.bindings.inUpdateExecuteQueue.startTime };
-        context.done();
-    });
-}
-exports.runFunction = runFunction;
-//# sourceMappingURL=function-03-update-execute-queue.js.map
-
-/***/ }),
-
-/***/ 56:
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-const zlib_1 = __webpack_require__(30);
-function gzipText(dataJson) {
-    return __awaiter(this, void 0, void 0, function* () {
-        return new Promise((resolve, reject) => {
-            zlib_1.gzip(dataJson, (err, res) => {
-                if (err) {
-                    reject(err);
-                }
-                resolve(res);
-            });
-        });
-    });
-}
-exports.gzipText = gzipText;
-//# sourceMappingURL=gzip.js.map
 
 /***/ })
 

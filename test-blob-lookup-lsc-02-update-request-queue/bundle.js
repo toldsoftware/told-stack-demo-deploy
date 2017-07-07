@@ -60,19 +60,89 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 127);
+/******/ 	return __webpack_require__(__webpack_require__.s = 261);
 /******/ })
 /************************************************************************/
 /******/ ({
 
-/***/ 127:
+/***/ 120:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-const function_02_update_request_queue_1 = __webpack_require__(54);
-const config_test_blob_1 = __webpack_require__(31);
+// Queue Trigger: Update Request Queue
+// Table In-Out: Changing Blob Singleton Check
+// Queue Out: Update Execute Queue Only Once Per Stale Timeout
+function createFunctionJson(config) {
+    return {
+        bindings: [
+            {
+                name: "inUpdateRequestQueue",
+                type: "queueTrigger",
+                direction: "in",
+                queueName: config.updateRequestQueue_queueName,
+                connection: config.updateRequestQueue_connection
+            },
+            {
+                name: "inoutChangeTable",
+                type: "blob",
+                direction: "inout",
+                tableName: config.changeTable_tableName_fromQueueTrigger,
+                partitionKey: config.changeTable_partitionKey_fromQueueTrigger,
+                rowKey: config.changeTable_rowKey_fromQueueTrigger,
+                connection: config.changeTable_connection
+            },
+            {
+                name: "outUpdateExecuteQueue",
+                type: "queue",
+                direction: "out",
+                queueName: config.updateExecuteQueue_queueName,
+                connection: config.updateExecuteQueue_connection
+            },
+            // BUG FIX: To Prevent inout RawDataBlob from crashing next step if it doesn't exist
+            {
+                name: "outRawDataBlob",
+                type: "blob",
+                direction: "out",
+                path: config.dataRawBlob_path_fromQueueTrigger,
+                connection: config.dataRawBlob_connection,
+            },
+        ],
+        disabled: false
+    };
+}
+exports.createFunctionJson = createFunctionJson;
+function runFunction(config, context) {
+    // BUG FIX: To Prevent inout RawDataBlob from crashing next step if it doesn't exist
+    if (!context.bindings.inoutChangeTable) {
+        context.bindings.outRawDataBlob = {};
+    }
+    if (context.bindings.inoutChangeTable
+        && context.bindings.inoutChangeTable.startTime
+        && context.bindingData.insertionTime.getTime() < context.bindings.inoutChangeTable.startTime + config.timeExecutionSeconds * 1000) {
+        // The update is already executing, don't do anything
+        context.done();
+        return;
+    }
+    // Queue Execute Update
+    context.bindings.inoutChangeTable = { startTime: Date.now() };
+    context.bindings.outUpdateExecuteQueue = context.bindings.inUpdateRequestQueue;
+    context.done();
+}
+exports.runFunction = runFunction;
+//# sourceMappingURL=function-02-update-request-queue.js.map
+
+/***/ }),
+
+/***/ 261:
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+const function_02_update_request_queue_1 = __webpack_require__(120);
+const config_test_blob_1 = __webpack_require__(71);
 const run = function (...args) {
     function_02_update_request_queue_1.runFunction.apply(null, [config_test_blob_1.config, ...args]);
 };
@@ -82,7 +152,7 @@ module.exports = global.__run;
 
 /***/ }),
 
-/***/ 13:
+/***/ 28:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -153,20 +223,20 @@ exports.Config = Config;
 
 /***/ }),
 
-/***/ 31:
+/***/ 71:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-const config_1 = __webpack_require__(13);
-const obtain_test_blob_data_1 = __webpack_require__(32);
+const config_1 = __webpack_require__(28);
+const obtain_test_blob_data_1 = __webpack_require__(72);
 exports.config = new config_1.Config(obtain_test_blob_data_1.obtainTestBlobData, 'api/test-blob');
 
 
 /***/ }),
 
-/***/ 32:
+/***/ 72:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -193,76 +263,6 @@ function obtainTestBlobData(oldBlob, key) {
 }
 exports.obtainTestBlobData = obtainTestBlobData;
 
-
-/***/ }),
-
-/***/ 54:
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-// Queue Trigger: Update Request Queue
-// Table In-Out: Changing Blob Singleton Check
-// Queue Out: Update Execute Queue Only Once Per Stale Timeout
-function createFunctionJson(config) {
-    return {
-        bindings: [
-            {
-                name: "inUpdateRequestQueue",
-                type: "queueTrigger",
-                direction: "in",
-                queueName: config.updateRequestQueue_queueName,
-                connection: config.updateRequestQueue_connection
-            },
-            {
-                name: "inoutChangeTable",
-                type: "blob",
-                direction: "inout",
-                tableName: config.changeTable_tableName_fromQueueTrigger,
-                partitionKey: config.changeTable_partitionKey_fromQueueTrigger,
-                rowKey: config.changeTable_rowKey_fromQueueTrigger,
-                connection: config.changeTable_connection
-            },
-            {
-                name: "outUpdateExecuteQueue",
-                type: "queue",
-                direction: "out",
-                queueName: config.updateExecuteQueue_queueName,
-                connection: config.updateExecuteQueue_connection
-            },
-            // BUG FIX: To Prevent inout RawDataBlob from crashing next step if it doesn't exist
-            {
-                name: "outRawDataBlob",
-                type: "blob",
-                direction: "out",
-                path: config.dataRawBlob_path_fromQueueTrigger,
-                connection: config.dataRawBlob_connection,
-            },
-        ],
-        disabled: false
-    };
-}
-exports.createFunctionJson = createFunctionJson;
-function runFunction(config, context) {
-    // BUG FIX: To Prevent inout RawDataBlob from crashing next step if it doesn't exist
-    if (!context.bindings.inoutChangeTable) {
-        context.bindings.outRawDataBlob = {};
-    }
-    if (context.bindings.inoutChangeTable
-        && context.bindings.inoutChangeTable.startTime
-        && context.bindingData.insertionTime.getTime() < context.bindings.inoutChangeTable.startTime + config.timeExecutionSeconds * 1000) {
-        // The update is already executing, don't do anything
-        context.done();
-        return;
-    }
-    // Queue Execute Update
-    context.bindings.inoutChangeTable = { startTime: Date.now() };
-    context.bindings.outUpdateExecuteQueue = context.bindings.inUpdateRequestQueue;
-    context.done();
-}
-exports.runFunction = runFunction;
-//# sourceMappingURL=function-02-update-request-queue.js.map
 
 /***/ })
 

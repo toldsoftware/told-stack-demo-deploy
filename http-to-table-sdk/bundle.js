@@ -60,7 +60,7 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 284);
+/******/ 	return __webpack_require__(__webpack_require__.s = 275);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -78546,32 +78546,23 @@ exports.asyncIt = asyncIt;
 /* 272 */,
 /* 273 */,
 /* 274 */,
-/* 275 */,
-/* 276 */,
-/* 277 */,
-/* 278 */,
-/* 279 */,
-/* 280 */,
-/* 281 */,
-/* 282 */,
-/* 283 */,
-/* 284 */
+/* 275 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-const function_01_http_1 = __webpack_require__(285);
-const config_http_input_blob_sdk_1 = __webpack_require__(287);
+const function_01_http_1 = __webpack_require__(276);
+const config_http_to_table_sdk_1 = __webpack_require__(278);
 const run = function (...args) {
-    function_01_http_1.runFunction.apply(null, [config_http_input_blob_sdk_1.config, ...args]);
+    function_01_http_1.runFunction.apply(null, [config_http_to_table_sdk_1.config, ...args]);
 };
 global.__run = run;
 module.exports = global.__run;
 
 
 /***/ }),
-/* 285 */
+/* 276 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -78585,7 +78576,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const blobs_1 = __webpack_require__(286);
+const tables_1 = __webpack_require__(277);
 // Http Request: Handle Update Request
 // Blob In: Read Old Lookup Blob Value
 // Queue Out: Update Request Queue
@@ -78605,6 +78596,24 @@ function createFunctionJson(config) {
                 type: "http",
                 direction: "out"
             },
+            {
+                name: "inOutputTable",
+                type: "table",
+                direction: "in",
+                tableName: config.outputTable_tableName,
+                partitionKey: config.outputTable_partitionKey,
+                rowKey: config.outputTable_rowKey,
+                connection: config.outputTable_connection
+            },
+            {
+                name: "outOutputTable",
+                type: "table",
+                direction: "out",
+                tableName: config.outputTable_tableName,
+                partitionKey: config.outputTable_partitionKey,
+                rowKey: config.outputTable_rowKey,
+                connection: config.outputTable_connection
+            },
         ],
         disabled: false
     };
@@ -78612,13 +78621,22 @@ function createFunctionJson(config) {
 exports.createFunctionJson = createFunctionJson;
 function runFunction(config, context, req) {
     return __awaiter(this, void 0, void 0, function* () {
-        // const data = context.bindings.inInputBlob;
-        const data = yield blobs_1.readBlob(context.bindingData.container, context.bindingData.blob);
+        const data = config.getDataFromRequest(req, context.bindingData);
+        context.log('insertOrMergeTableRow', { inOutputTable: context.bindings.inOutputTable, outOutputTable: context.bindings.outOutputTable, data });
+        //context.bindings.outOutputTable = insertOrMergeTableRow(context.bindings.inOutputTable, data);
+        if (context.bindings.inOutputTable) {
+            // context.bindings.outOutputTable = context.bindings.inOutputTable;
+            // for (let k in data) {
+            //     context.bindings.outOutputTable[k] = data[k];
+            // }
+            yield tables_1.saveRow(context.bindingData.table, context.bindingData.partition, context.bindingData.row, data);
+        }
+        else {
+            context.bindings.outOutputTable = data;
+        }
+        // context.log('The Data was Queued', data);
         context.res = {
-            body: data,
-            headers: {
-                'Content-Type': 'application/json'
-            }
+            body: 'The Data was Stored in a Table'
         };
         context.done();
     });
@@ -78628,7 +78646,7 @@ exports.runFunction = runFunction;
 //# sourceMappingURL=function-01-http.js.map
 
 /***/ }),
-/* 286 */
+/* 277 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -78644,63 +78662,156 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 const azure_storage_1 = __webpack_require__(123);
 const async_it_1 = __webpack_require__(256);
-function readBlobAsText(containerName, blobName) {
+const entGen = azure_storage_1.TableUtilities.entityGenerator;
+function saveRow(tableName, partitionKey, rowKey, values, ...aliases) {
     return __awaiter(this, void 0, void 0, function* () {
-        const blobService = azure_storage_1.createBlobService();
+        const tableService = azure_storage_1.createTableService();
+        partitionKey = partitionKey.toLowerCase();
+        rowKey = rowKey.toLowerCase();
+        aliases = aliases.map(x => x.toLowerCase());
+        // Save Data
+        const entity = convertToEntity(tableService, partitionKey, rowKey, values);
+        const result = yield async_it_1.asyncIt(cb => tableService.insertOrMergeEntity(tableName, entity, {}, cb));
+        // Save Aliases
+        for (let a of aliases) {
+            const aliasEntity = convertToEntity(tableService, partitionKey, a, { _ref: '' + rowKey });
+            yield async_it_1.asyncIt(cb => tableService.insertOrMergeEntity(tableName, aliasEntity, {}, cb));
+        }
+        return result;
+    });
+}
+exports.saveRow = saveRow;
+function loadRow(tableName, partitionKey, rowKeyOrAlias) {
+    return __awaiter(this, void 0, void 0, function* () {
+        const tableService = azure_storage_1.createTableService();
+        partitionKey = partitionKey.toLowerCase();
+        rowKeyOrAlias = rowKeyOrAlias.toLowerCase();
         try {
-            return yield async_it_1.asyncIt(cb => blobService.getBlobToText(containerName, blobName, cb));
+            // Get Entity
+            let entity = yield async_it_1.asyncIt(cb => tableService.retrieveEntity(tableName, partitionKey, rowKeyOrAlias, { entityResolver }, cb));
+            // Dereference Alias
+            if (entity._ref) {
+                entity = yield async_it_1.asyncIt(cb => tableService.retrieveEntity(tableName, partitionKey, entity._ref, { entityResolver }, cb));
+            }
+            const timestamp = Date.parse(entity.Timestamp);
+            const metadata = {
+                _timestamp: timestamp,
+                _ageMs: Date.now() - timestamp,
+            };
+            return Object.assign({}, entity, metadata);
         }
         catch (err) {
-            // Make sure error was caused because blob does not exist
-            const bRes = yield async_it_1.asyncIt(cb => blobService.doesBlobExist(containerName, blobName, cb));
-            if (bRes.exists) {
-                throw err;
+            console.warn(err);
+            if (err && err.code === 'ResourceNotFound') {
+                return null;
             }
-            return null;
+            throw err;
         }
     });
 }
-exports.readBlobAsText = readBlobAsText;
-function readBlob(containerName, blobName) {
+exports.loadRow = loadRow;
+function loadRows(tableName, partitionKey, count) {
     return __awaiter(this, void 0, void 0, function* () {
-        const text = yield readBlobAsText(containerName, blobName);
-        if (!text) {
-            return null;
+        const tableService = azure_storage_1.createTableService();
+        partitionKey = partitionKey.toLowerCase();
+        try {
+            // Get Entity
+            const query = new azure_storage_1.TableQuery()
+                .top(count)
+                .where('PartitionKey eq ?', partitionKey);
+            const result = yield async_it_1.asyncIt(cb => tableService.queryEntities(tableName, query, null, { entityResolver }, cb));
+            return result.entries;
         }
-        return JSON.parse(text);
+        catch (err) {
+            console.warn(err);
+            // if (err && err.code === 'ResourceNotFound') {
+            //     return null;
+            // }
+            throw err;
+        }
     });
 }
-exports.readBlob = readBlob;
-//# sourceMappingURL=blobs.js.map
+exports.loadRows = loadRows;
+function entityResolver(en) {
+    const r = {};
+    for (let k in en) {
+        r[k] = en[k]._;
+    }
+    return r;
+}
+function convertToEntity(tableService, partitionKey, rowKey, values) {
+    const entity = Object.getOwnPropertyNames(values).reduce((o, k) => {
+        o[k] = convertToEntityValue(values[k]);
+        return o;
+    }, {});
+    entity.PartitionKey = entGen.String(partitionKey);
+    entity.RowKey = entGen.String(rowKey);
+    return entity;
+}
+function convertToEntityValue(value) {
+    if (typeof value === 'undefined') {
+        return undefined;
+    }
+    else if (value === undefined) {
+        return undefined;
+    }
+    else if (value === null) {
+        return undefined;
+    }
+    else if (typeof value === 'string') {
+        return entGen.String(value);
+    }
+    else if (typeof value === 'boolean') {
+        return entGen.Boolean(value);
+    }
+    else if (typeof value === 'number') {
+        if (Math.floor(value) === value) {
+            return entGen.Int64(value);
+        }
+        else {
+            return entGen.Double(value);
+        }
+    }
+    else if (value instanceof Date) {
+        return entGen.DateTime(value);
+    }
+    else {
+        return entGen.String(JSON.stringify(value));
+    }
+}
+//# sourceMappingURL=tables.js.map
 
 /***/ }),
-/* 287 */
+/* 278 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-const config_1 = __webpack_require__(288);
+const config_1 = __webpack_require__(279);
 exports.config = new config_1.Config();
 
 
 /***/ }),
-/* 288 */
+/* 279 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
 class Config {
-    constructor(http_routeRoot = 'api/http-input-blob-sdk', default_storageConnectionString_AppSettingName = 'AZURE_STORAGE_CONNECTION_STRING') {
+    constructor(http_routeRoot = 'api/http-to-table-sdk', default_storageConnectionString_AppSettingName = 'AZURE_STORAGE_CONNECTION_STRING') {
         this.http_routeRoot = http_routeRoot;
         this.default_storageConnectionString_AppSettingName = default_storageConnectionString_AppSettingName;
-        this.http_route = this.http_routeRoot + '/{container}/{*blob}';
-        this.inputBlob_path = '{container}/{blob}';
-        this.inputBlob_connection = this.default_storageConnectionString_AppSettingName;
+        this.http_route = this.http_routeRoot + '/{table}/{partition}/{row}';
+        this.outputTable_tableName = `{table}`;
+        this.outputTable_partitionKey = `{partition}`;
+        this.outputTable_rowKey = `{row}`;
+        this.outputTable_connection = this.default_storageConnectionString_AppSettingName;
     }
     getDataFromRequest(req, bindingData) {
-        return { key: { container: bindingData.container, blob: bindingData.blob }, value: req.body };
+        // Allow controlling property names directly
+        return Object.assign({}, req.body);
     }
 }
 exports.Config = Config;
