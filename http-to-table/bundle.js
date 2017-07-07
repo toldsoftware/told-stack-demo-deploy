@@ -133,6 +133,7 @@ function createFunctionJson(config) {
 exports.createFunctionJson = createFunctionJson;
 function runFunction(config, context, req) {
     const data = config.getDataFromRequest(req, context.bindingData);
+    context.log('insertOrMergeTableRow', { inOutputTable: context.bindings.inOutputTable, outOutputTable: context.bindings.outOutputTable, data });
     table_1.insertOrMergeTableRow(context.bindings.inOutputTable, context.bindings.outOutputTable, data);
     // context.log('The Data was Queued', data);
     context.res = {
