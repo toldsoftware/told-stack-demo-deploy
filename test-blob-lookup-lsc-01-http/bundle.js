@@ -272,9 +272,10 @@ function runFunction(config, context, req) {
         // If the blob value is not stale
         // Return Current Blob Value with Long TTL
         const remainingTtl = lookup && lookup.timeKey
-            && ((parseInt(lookup.timeKey) + config.timeToLiveSeconds * 1000 - Date.now()) / 1000);
+            && Math.ceil((parseInt(lookup.timeKey) + config.timeToLiveSeconds * 1000 - Date.now()) / 1000);
         context.log('remainingTtl', { remainingTtl, timeKey: lookup, timeToLiveSeconds: config.timeToLiveSeconds, now: Date.now() });
-        if (remainingTtl > 0) {
+        if (remainingTtl > config.timeExtendSeconds) {
+            context.log('Return Old Lookup', { lookup, remainingTtl });
             // Return Old Lookup (Long TTL)
             context.res = {
                 body: lookup,
@@ -283,14 +284,16 @@ function runFunction(config, context, req) {
                     'Cache-Control': `public, max-age=${remainingTtl}`
                 }
             };
+            context.log('DONE');
             context.done();
             return;
         }
+        context.log('Request Update');
         // Set Update Request Queue
         context.bindings.outUpdateRequestQueue = Object.assign({}, dataKey, { timeKey: '' + Date.now() });
         // Return Current Blob Value with Short TTL
         if (!lookup) {
-            // Deal with missing lookup (First time request?)
+            context.log('Missing Lookup (First Time?)');
             context.res = {
                 status: 400,
                 body: `Not Ready Yet: Try again in ${config.timePollSeconds} Seconds`,
@@ -298,10 +301,12 @@ function runFunction(config, context, req) {
                     'Cache-Control': `public, max-age=${config.timeExtendSeconds}`
                 }
             };
+            context.log('DONE');
             context.done();
             return;
         }
         // Return Old Lookup (Short)
+        context.log('Return Old Lookup with Short TTL while Getting New Lookup and Value');
         context.res = {
             body: lookup,
             headers: {
@@ -309,6 +314,7 @@ function runFunction(config, context, req) {
                 'Cache-Control': `public, max-age=${config.timeExtendSeconds}`,
             }
         };
+        context.log('DONE');
         context.done();
     });
 }
