@@ -78,10 +78,10 @@ class Config {
         this.apiRoutePath = apiRoutePath;
         this.default_storageConnectionString_AppSettingName = default_storageConnectionString_AppSettingName;
         this.timeToLiveSeconds = 60;
-        this.timeExtendSeconds = 10;
+        this.timeExtendSeconds = 1;
         this.timeExecutionSeconds = 10;
-        this.timePollSeconds = 15;
-        this.maxPollCount = 3;
+        this.timePollSeconds = 1;
+        this.maxPollCount = 5;
         this.domain = '/';
         this.blobProxyRoutePath = 'blob';
         this.lookupBlob_connection = this.default_storageConnectionString_AppSettingName;
