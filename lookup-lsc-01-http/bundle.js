@@ -250,7 +250,7 @@ function runFunction(config, context, req) {
         // Return Current Blob Value with Long TTL
         const remainingTtl = lookup && lookup.timeKey
             && ((parseInt(lookup.timeKey) + config.timeToLiveSeconds * 1000 - Date.now()) / 1000);
-        context.log('remainingTtl', { remainingTtl, timeKey: lookup.timeKey, timeToLiveSeconds: config.timeToLiveSeconds, now: Date.now() });
+        context.log('remainingTtl', { remainingTtl, timeKey: lookup, timeToLiveSeconds: config.timeToLiveSeconds, now: Date.now() });
         if (remainingTtl > 0) {
             // Return Old Lookup (Long TTL)
             context.res = {
