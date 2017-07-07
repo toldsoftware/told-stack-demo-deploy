@@ -157,7 +157,7 @@ class Config {
     }
     getDataDownloadBlobName(blobName, lookup) {
         // TODO: Test if works with .ext and switch to underscore if needed
-        return `${blobName}/${lookup.startTime}.gzip`;
+        return `${blobName}/${lookup.timekey}.gzip`;
     }
 }
 exports.Config = Config;
@@ -270,8 +270,8 @@ function runFunction(config, context, req) {
         context.log('Lookup', { lookup });
         // If the blob value is not stale
         // Return Current Blob Value with Long TTL
-        const remainingTtl = lookup && lookup.startTime
-            && (lookup.startTime + config.timeToLiveSeconds * 1000 - Date.now());
+        const remainingTtl = lookup && lookup.timekey
+            && (parseInt(lookup.timekey) + config.timeToLiveSeconds * 1000 - Date.now());
         if (remainingTtl > 0) {
             // Return Old Lookup (Long TTL)
             context.res = {
@@ -285,7 +285,7 @@ function runFunction(config, context, req) {
             return;
         }
         // Set Update Request Queue
-        context.bindings.outUpdateRequestQueue = Object.assign({}, dataKey, { startTime: '' + Date.now() });
+        context.bindings.outUpdateRequestQueue = Object.assign({}, dataKey, { timekey: '' + Date.now() });
         // Return Current Blob Value with Short TTL
         if (!lookup) {
             // Deal with missing lookup (First time request?)

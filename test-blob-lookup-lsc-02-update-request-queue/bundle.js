@@ -26185,7 +26185,7 @@ class Config {
     }
     getDataDownloadBlobName(blobName, lookup) {
         // TODO: Test if works with .ext and switch to underscore if needed
-        return `${blobName}/${lookup.startTime}.gzip`;
+        return `${blobName}/${lookup.timekey}.gzip`;
     }
 }
 exports.Config = Config;
@@ -78911,8 +78911,8 @@ function runFunction(config, context) {
             context.log('Ensure RawDataBlob exists');
         }
         if (context.bindings.inChangeTable
-            && context.bindings.inChangeTable.startTime
-            && context.bindingData.insertionTime.getTime() < context.bindings.inChangeTable.startTime + config.timeExecutionSeconds * 1000) {
+            && context.bindings.inChangeTable.changeTime
+            && context.bindingData.insertionTime.getTime() < context.bindings.inChangeTable.changeTime + config.timeExecutionSeconds * 1000) {
             // The update is already executing, don't do anything
             context.log('DONE Already Executing Update');
             context.done();

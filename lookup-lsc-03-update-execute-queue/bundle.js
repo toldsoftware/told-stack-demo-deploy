@@ -26185,7 +26185,7 @@ class Config {
     }
     getDataDownloadBlobName(blobName, lookup) {
         // TODO: Test if works with .ext and switch to underscore if needed
-        return `${blobName}/${lookup.startTime}.gzip`;
+        return `${blobName}/${lookup.timekey}.gzip`;
     }
 }
 exports.Config = Config;
@@ -78893,7 +78893,7 @@ function runFunction(config, context) {
         context.bindings.outDataDownloadBlob = yield gzip_1.gzipText(JSON.stringify(blobData));
         context.log('Update Lookup Table');
         // context.bindings.outLookupTable = { startTime: context.bindings.inUpdateExecuteQueue.startTime };
-        context.bindings.outLookupTable = yield tables_sdk_1.insertOrMergeTableRow_sdk(config.getLookupTableRowKey_fromQueueTrigger(context.bindings.inUpdateExecuteQueue), context.bindings.inLookupTable, { startTime: context.bindings.inUpdateExecuteQueue.startTime });
+        context.bindings.outLookupTable = yield tables_sdk_1.insertOrMergeTableRow_sdk(config.getLookupTableRowKey_fromQueueTrigger(context.bindings.inUpdateExecuteQueue), context.bindings.inLookupTable, { timekey: context.bindings.inUpdateExecuteQueue.timekey });
         context.log('DONE');
         context.done();
     });
