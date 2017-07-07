@@ -78877,11 +78877,17 @@ function createFunctionJson(config) {
 exports.createFunctionJson = createFunctionJson;
 function runFunction(config, context) {
     return __awaiter(this, void 0, void 0, function* () {
+        context.log('START');
+        context.log('Obtain New Data');
         const blobData = yield config.obtainBlobData(context.bindings.inoutRawDataBlob, context.bindings.inUpdateExecuteQueue);
+        context.log('Save New Data to Raw Blob');
         context.bindings.inoutRawDataBlob = blobData;
+        context.log('Gzip and Save New Data to Download Blob');
         context.bindings.outDataDownloadBlob = yield gzip_1.gzipText(JSON.stringify(blobData));
+        context.log('Update Lookup Table');
         // context.bindings.outLookupTable = { startTime: context.bindings.inUpdateExecuteQueue.startTime };
         context.bindings.outLookupTable = yield tables_sdk_1.insertOrMergeTableRow_sdk(config.getLookupTableRowKey_fromQueueTrigger(context.bindings.inUpdateExecuteQueue), context.bindings.inLookupTable, { startTime: context.bindings.inUpdateExecuteQueue.startTime });
+        context.log('DONE');
         context.done();
     });
 }
