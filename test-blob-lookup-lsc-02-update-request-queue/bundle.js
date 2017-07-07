@@ -78903,7 +78903,7 @@ function createFunctionJson(config) {
 exports.createFunctionJson = createFunctionJson;
 function runFunction(config, context) {
     return __awaiter(this, void 0, void 0, function* () {
-        context.log('START');
+        context.log('START', { inChangeTable: context.bindings.inChangeTable, insertionTime: context.bindingData.insertionTime });
         // BUG FIX: To Prevent inout RawDataBlob from crashing next step if it doesn't exist
         if (!context.bindings.inChangeTable) {
             context.bindings.outRawDataBlob = { __empty: '' };
