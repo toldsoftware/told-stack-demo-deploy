@@ -134,7 +134,7 @@ exports.createFunctionJson = createFunctionJson;
 function runFunction(config, context, req) {
     const data = config.getDataFromRequest(req, context.bindingData);
     context.log('insertOrMergeTableRow', { inOutputTable: context.bindings.inOutputTable, outOutputTable: context.bindings.outOutputTable, data });
-    table_1.insertOrMergeTableRow(context.bindings.inOutputTable, context.bindings.outOutputTable, data);
+    context.bindings.outOutputTable = table_1.insertOrMergeTableRow(context.bindings.inOutputTable, data);
     // context.log('The Data was Queued', data);
     context.res = {
         body: 'The Data was Stored in a Table'
@@ -153,14 +153,15 @@ exports.runFunction = runFunction;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-function insertOrMergeTableRow(table_in, table_out, data) {
+function insertOrMergeTableRow(table_in, data) {
     if (table_in) {
         for (let k in data) {
             table_in[k] = data[k];
         }
+        return undefined;
     }
     else {
-        table_out = data;
+        return data;
     }
 }
 exports.insertOrMergeTableRow = insertOrMergeTableRow;
