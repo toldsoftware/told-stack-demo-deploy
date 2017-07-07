@@ -38,6 +38,13 @@
    "direction": "out",
    "path": "{containerName}/{blobName}",
    "connection": "AZURE_STORAGE_CONNECTION_STRING"
+  },
+  {
+   "name": "outDataDownloadBlob",
+   "type": "blob",
+   "direction": "out",
+   "path": "{containerName}/{blobName}/{startTime}.gzip",
+   "connection": "AZURE_STORAGE_CONNECTION_STRING"
   }
  ],
  "disabled": false
