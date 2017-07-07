@@ -285,7 +285,7 @@ function runFunction(config, context, req) {
             return;
         }
         // Set Update Request Queue
-        context.bindings.outUpdateRequestQueue = Object.assign({}, dataKey, { startTime: Date.now() });
+        context.bindings.outUpdateRequestQueue = Object.assign({}, dataKey, { startTime: '' + Date.now() });
         // Return Current Blob Value with Short TTL
         if (!lookup) {
             // Deal with missing lookup (First time request?)
