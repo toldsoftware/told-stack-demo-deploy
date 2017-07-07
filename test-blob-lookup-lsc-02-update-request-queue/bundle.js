@@ -78914,7 +78914,7 @@ function runFunction(config, context) {
         const changeTime = context.bindings.inChangeTable
             && context.bindings.inChangeTable.changeTime;
         const remainingTimeToFinish = changeTime
-            && (changeTime + config.timeToLiveSeconds * 1000 - Date.now());
+            && (changeTime + config.timeExecutionSeconds * 1000 - Date.now());
         context.log('remainingTimeToFinish', { remainingTimeToFinish });
         if (remainingTimeToFinish > 0) {
             // The update is already executing, don't do anything
