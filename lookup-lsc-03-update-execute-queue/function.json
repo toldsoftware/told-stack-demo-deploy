@@ -22,11 +22,20 @@
    "connection": "AZURE_STORAGE_CONNECTION_STRING"
   },
   {
+   "name": "inLookupTable",
+   "type": "table",
+   "direction": "ib",
+   "tableName": "blobaccess",
+   "partitionKey": "{queueTrigger.containerName}_{queueTrigger.blobName}",
+   "rowKey": "lookup",
+   "connection": "AZURE_STORAGE_CONNECTION_STRING"
+  },
+  {
    "name": "outLookupTable",
-   "type": "blob",
+   "type": "table",
    "direction": "out",
    "tableName": "blobaccess",
-   "partitionKey": "{container}_{blob}",
+   "partitionKey": "{queueTrigger.containerName}_{queueTrigger.blobName}",
    "rowKey": "lookup",
    "connection": "AZURE_STORAGE_CONNECTION_STRING"
   }
