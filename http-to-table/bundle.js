@@ -158,7 +158,7 @@ function insertOrMergeTableRow(table_in, data) {
         for (let k in data) {
             table_in[k] = data[k];
         }
-        return undefined;
+        return table_in;
     }
     else {
         return data;
