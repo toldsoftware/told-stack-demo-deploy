@@ -60,21 +60,21 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 269);
+/******/ 	return __webpack_require__(__webpack_require__.s = 265);
 /******/ })
 /************************************************************************/
 /******/ ({
 
-/***/ 269:
+/***/ 265:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-const function_01_http_1 = __webpack_require__(270);
-const config_http_to_queue_1 = __webpack_require__(271);
+const function_01_http_1 = __webpack_require__(266);
+const config_http_early_response_1 = __webpack_require__(267);
 const run = function (...args) {
-    function_01_http_1.runFunction.apply(null, [config_http_to_queue_1.config, ...args]);
+    function_01_http_1.runFunction.apply(null, [config_http_early_response_1.config, ...args]);
 };
 global.__run = run;
 module.exports = global.__run;
@@ -82,7 +82,7 @@ module.exports = global.__run;
 
 /***/ }),
 
-/***/ 270:
+/***/ 266:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -120,13 +120,21 @@ function createFunctionJson(config) {
 }
 exports.createFunctionJson = createFunctionJson;
 function runFunction(config, context, req) {
-    const data = config.getDataFromRequest(req, context.bindingData);
-    context.bindings.outOutputQueue = data;
-    // context.log('The Data was Queued', data);
+    context.log('START Immediate Response');
     context.res = {
-        body: 'The Data was Queued'
+        body: 'The Data will be Queued'
     };
-    context.done();
+    // EXPERIMENT: Will the response be sent before the done call?
+    // Wait 5 Seconds before marking done
+    // Test how quickly the response is received.
+    context.log('Wait 5 Seconds');
+    setTimeout(() => {
+        context.log('Queue Message');
+        const data = config.getDataFromRequest(req, context.bindingData);
+        context.bindings.outOutputQueue = data;
+        context.log('DONE');
+        context.done();
+    }, 5000);
 }
 exports.runFunction = runFunction;
 ;
@@ -134,19 +142,19 @@ exports.runFunction = runFunction;
 
 /***/ }),
 
-/***/ 271:
+/***/ 267:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-const config_1 = __webpack_require__(272);
+const config_1 = __webpack_require__(268);
 exports.config = new config_1.Config();
 
 
 /***/ }),
 
-/***/ 272:
+/***/ 268:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";

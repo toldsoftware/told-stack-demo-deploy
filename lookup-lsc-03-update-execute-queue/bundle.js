@@ -78890,6 +78890,9 @@ function runFunction(config, context) {
         const blobData = yield config.obtainBlobData(context.bindings.inRawDataBlob, context.bindings.inUpdateExecuteQueue);
         context.log('Save New Data to Raw Blob');
         context.bindings.outRawDataBlob = blobData;
+        // TODO: Set the Download Blob CDN Data
+        // 'Content-Type': 'application/json',
+        // 'Cache-Control': `public, max-age=${config.timeCacheControlSeconds_downloadBlob||4*StaleTimeout?}`,
         context.log('Gzip and Save New Data to Download Blob');
         context.bindings.outDataDownloadBlob = yield gzip_1.gzipText(JSON.stringify(blobData));
         context.log('Update Lookup Table');
