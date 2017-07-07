@@ -26151,27 +26151,27 @@ class Config {
     getLookupTableRowKey_fromQueueTrigger(queueTrigger) {
         return {
             table: this.lookupTable_tableName_fromQueueTrigger
-                .replace(/{queueTrigger.containerName}/g, queueTrigger.containerName)
-                .replace(/{queueTrigger.blobName}/g, queueTrigger.blobName),
+                .replace(/\{queueTrigger\.containerName\}/g, queueTrigger.containerName)
+                .replace(/\{queueTrigger\.blobName\}/g, queueTrigger.blobName),
             partition: this.lookupTable_partitionKey_fromQueueTrigger
-                .replace(/{queueTrigger.containerName}/g, queueTrigger.containerName)
-                .replace(/{queueTrigger.blobName}/g, queueTrigger.blobName),
+                .replace(/\{queueTrigger\.containerName\}/g, queueTrigger.containerName)
+                .replace(/\{queueTrigger\.blobName\}/g, queueTrigger.blobName),
             row: this.lookupTable_rowKey_fromQueueTrigger
-                .replace(/{queueTrigger.containerName}/g, queueTrigger.containerName)
-                .replace(/{queueTrigger.blobName}/g, queueTrigger.blobName),
+                .replace(/\{queueTrigger\.containerName\}/g, queueTrigger.containerName)
+                .replace(/\{queueTrigger\.blobName\}/g, queueTrigger.blobName),
         };
     }
     getChangeTableRowKey_fromQueueTrigger(queueTrigger) {
         return {
             table: this.changeTable_tableName_fromQueueTrigger
-                .replace(/{queueTrigger.containerName}/g, queueTrigger.containerName)
-                .replace(/{queueTrigger.blobName}/g, queueTrigger.blobName),
+                .replace(/\{queueTrigger\.containerName\}/g, queueTrigger.containerName)
+                .replace(/\{queueTrigger\.blobName\}/g, queueTrigger.blobName),
             partition: this.changeTable_partitionKey_fromQueueTrigger
-                .replace(/{queueTrigger.containerName}/g, queueTrigger.containerName)
-                .replace(/{queueTrigger.blobName}/g, queueTrigger.blobName),
+                .replace(/\{queueTrigger\.containerName\}/g, queueTrigger.containerName)
+                .replace(/\{queueTrigger\.blobName\}/g, queueTrigger.blobName),
             row: this.changeTable_rowKey_fromQueueTrigger
-                .replace(/{queueTrigger.containerName}/g, queueTrigger.containerName)
-                .replace(/{queueTrigger.blobName}/g, queueTrigger.blobName),
+                .replace(/\{queueTrigger\.containerName\}/g, queueTrigger.containerName)
+                .replace(/\{queueTrigger\.blobName\}/g, queueTrigger.blobName),
         };
     }
     getLookupUrl(key) {
@@ -78855,7 +78855,7 @@ function createFunctionJson(config) {
             {
                 name: "inLookupTable",
                 type: "table",
-                direction: "ib",
+                direction: "in",
                 tableName: config.lookupTable_tableName_fromQueueTrigger,
                 partitionKey: config.lookupTable_partitionKey_fromQueueTrigger,
                 rowKey: config.lookupTable_rowKey_fromQueueTrigger,

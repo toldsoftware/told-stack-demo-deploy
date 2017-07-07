@@ -24,7 +24,7 @@
   {
    "name": "inLookupTable",
    "type": "table",
-   "direction": "ib",
+   "direction": "in",
    "tableName": "blobaccess",
    "partitionKey": "{queueTrigger.containerName}_{queueTrigger.blobName}",
    "rowKey": "lookup",
