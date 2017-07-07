@@ -78922,7 +78922,7 @@ function runFunction(config, context) {
         // Queue Execute Update
         context.log('Execute Update');
         // context.bindings.outChangeTable = { startTime: Date.now() };
-        context.bindings.outChangeTable = yield tables_sdk_1.insertOrMergeTableRow_sdk(config.getChangeTableRowKey_fromQueueTrigger(context.bindings.inUpdateRequestQueue), context.bindings.inChangeTable, { startTime: Date.now() });
+        context.bindings.outChangeTable = yield tables_sdk_1.insertOrMergeTableRow_sdk(config.getChangeTableRowKey_fromQueueTrigger(context.bindings.inUpdateRequestQueue), context.bindings.inChangeTable, { changeTime: Date.now() });
         context.bindings.outUpdateExecuteQueue = context.bindings.inUpdateRequestQueue;
         context.log('DONE');
         context.done();
