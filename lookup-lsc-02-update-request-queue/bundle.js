@@ -26130,16 +26130,16 @@ class Config {
         this.lookupTable_partitionKey = `{container}_{blob}`;
         this.lookupTable_rowKey = `lookup`;
         this.lookupTable_tableName_fromQueueTrigger = `blobaccess`;
-        this.lookupTable_partitionKey_fromQueueTrigger = `{queueTrigger.containerName}_{queueTrigger.blobName}`;
+        this.lookupTable_partitionKey_fromQueueTrigger = `{containerName}_{blobName}`;
         this.lookupTable_rowKey_fromQueueTrigger = `lookup`;
         this.changeTable_tableName = `blobaccess`;
         this.changeTable_partitionKey = `{container}_{blob}`;
         this.changeTable_rowKey = `change`;
         this.changeTable_tableName_fromQueueTrigger = `blobaccess`;
-        this.changeTable_partitionKey_fromQueueTrigger = `{queueTrigger.containerName}_{queueTrigger.blobName}`;
+        this.changeTable_partitionKey_fromQueueTrigger = `{containerName}_{blobName}`;
         this.changeTable_rowKey_fromQueueTrigger = `change`;
-        this.dataRawBlob_path_fromQueueTrigger = `{queueTrigger.containerName}/{queueTrigger.blobName}`;
-        this.dataDownloadBlob_path_fromQueueTriggerDate = `{queueTrigger.containerName}/{queueTrigger.blobName}/{queueTrigger.startTime}.gzip`;
+        this.dataRawBlob_path_fromQueueTrigger = `{containerName}/{blobName}`;
+        this.dataDownloadBlob_path_fromQueueTriggerDate = `{containerName}/{blobName}/{startTime}.gzip`;
     }
     getKeyFromRequest(req, bindingData) {
         const d = bindingData;
@@ -26151,27 +26151,27 @@ class Config {
     getLookupTableRowKey_fromQueueTrigger(queueTrigger) {
         return {
             table: this.lookupTable_tableName_fromQueueTrigger
-                .replace(/\{queueTrigger\.containerName\}/g, queueTrigger.containerName)
-                .replace(/\{queueTrigger\.blobName\}/g, queueTrigger.blobName),
+                .replace(/\{containerName\}/g, queueTrigger.containerName)
+                .replace(/\{blobName\}/g, queueTrigger.blobName),
             partition: this.lookupTable_partitionKey_fromQueueTrigger
-                .replace(/\{queueTrigger\.containerName\}/g, queueTrigger.containerName)
-                .replace(/\{queueTrigger\.blobName\}/g, queueTrigger.blobName),
+                .replace(/\{containerName\}/g, queueTrigger.containerName)
+                .replace(/\{blobName\}/g, queueTrigger.blobName),
             row: this.lookupTable_rowKey_fromQueueTrigger
-                .replace(/\{queueTrigger\.containerName\}/g, queueTrigger.containerName)
-                .replace(/\{queueTrigger\.blobName\}/g, queueTrigger.blobName),
+                .replace(/\{containerName\}/g, queueTrigger.containerName)
+                .replace(/\{blobName\}/g, queueTrigger.blobName),
         };
     }
     getChangeTableRowKey_fromQueueTrigger(queueTrigger) {
         return {
             table: this.changeTable_tableName_fromQueueTrigger
-                .replace(/\{queueTrigger\.containerName\}/g, queueTrigger.containerName)
-                .replace(/\{queueTrigger\.blobName\}/g, queueTrigger.blobName),
+                .replace(/\{containerName\}/g, queueTrigger.containerName)
+                .replace(/\{blobName\}/g, queueTrigger.blobName),
             partition: this.changeTable_partitionKey_fromQueueTrigger
-                .replace(/\{queueTrigger\.containerName\}/g, queueTrigger.containerName)
-                .replace(/\{queueTrigger\.blobName\}/g, queueTrigger.blobName),
+                .replace(/\{containerName\}/g, queueTrigger.containerName)
+                .replace(/\{blobName\}/g, queueTrigger.blobName),
             row: this.changeTable_rowKey_fromQueueTrigger
-                .replace(/\{queueTrigger\.containerName\}/g, queueTrigger.containerName)
-                .replace(/\{queueTrigger\.blobName\}/g, queueTrigger.blobName),
+                .replace(/\{containerName\}/g, queueTrigger.containerName)
+                .replace(/\{blobName\}/g, queueTrigger.blobName),
         };
     }
     getLookupUrl(key) {

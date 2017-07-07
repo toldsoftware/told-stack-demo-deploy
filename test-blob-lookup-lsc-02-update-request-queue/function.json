@@ -12,7 +12,7 @@
    "type": "table",
    "direction": "in",
    "tableName": "blobaccess",
-   "partitionKey": "{queueTrigger.containerName}_{queueTrigger.blobName}",
+   "partitionKey": "{containerName}_{blobName}",
    "rowKey": "change",
    "connection": "AZURE_STORAGE_CONNECTION_STRING"
   },
@@ -21,7 +21,7 @@
    "type": "table",
    "direction": "out",
    "tableName": "blobaccess",
-   "partitionKey": "{queueTrigger.containerName}_{queueTrigger.blobName}",
+   "partitionKey": "{containerName}_{blobName}",
    "rowKey": "change",
    "connection": "AZURE_STORAGE_CONNECTION_STRING"
   },
@@ -36,7 +36,7 @@
    "name": "outRawDataBlob",
    "type": "blob",
    "direction": "out",
-   "path": "{queueTrigger.containerName}/{queueTrigger.blobName}",
+   "path": "{containerName}/{blobName}",
    "connection": "AZURE_STORAGE_CONNECTION_STRING"
   }
  ],

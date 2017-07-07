@@ -11,14 +11,14 @@
    "name": "inoutRawDataBlob",
    "type": "blob",
    "direction": "inout",
-   "path": "{queueTrigger.containerName}/{queueTrigger.blobName}",
+   "path": "{containerName}/{blobName}",
    "connection": "AZURE_STORAGE_CONNECTION_STRING"
   },
   {
    "name": "outDataDownloadBlob",
    "type": "blob",
    "direction": "out",
-   "path": "{queueTrigger.containerName}/{queueTrigger.blobName}/{queueTrigger.startTime}.gzip",
+   "path": "{containerName}/{blobName}/{startTime}.gzip",
    "connection": "AZURE_STORAGE_CONNECTION_STRING"
   },
   {
@@ -26,7 +26,7 @@
    "type": "table",
    "direction": "in",
    "tableName": "blobaccess",
-   "partitionKey": "{queueTrigger.containerName}_{queueTrigger.blobName}",
+   "partitionKey": "{containerName}_{blobName}",
    "rowKey": "lookup",
    "connection": "AZURE_STORAGE_CONNECTION_STRING"
   },
@@ -35,7 +35,7 @@
    "type": "table",
    "direction": "out",
    "tableName": "blobaccess",
-   "partitionKey": "{queueTrigger.containerName}_{queueTrigger.blobName}",
+   "partitionKey": "{containerName}_{blobName}",
    "rowKey": "lookup",
    "connection": "AZURE_STORAGE_CONNECTION_STRING"
   }
