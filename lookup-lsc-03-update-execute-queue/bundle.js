@@ -78839,9 +78839,16 @@ function createFunctionJson(config) {
                 connection: config.updateExecuteQueue_connection,
             },
             {
-                name: "inoutRawDataBlob",
+                name: "inRawDataBlob",
                 type: "blob",
-                direction: "inout",
+                direction: "in",
+                path: config.dataRawBlob_path_fromQueueTrigger,
+                connection: config.dataRawBlob_connection,
+            },
+            {
+                name: "outRawDataBlob",
+                type: "blob",
+                direction: "out",
                 path: config.dataRawBlob_path_fromQueueTrigger,
                 connection: config.dataRawBlob_connection,
             },
@@ -78879,9 +78886,9 @@ function runFunction(config, context) {
     return __awaiter(this, void 0, void 0, function* () {
         context.log('START');
         context.log('Obtain New Data');
-        const blobData = yield config.obtainBlobData(context.bindings.inoutRawDataBlob, context.bindings.inUpdateExecuteQueue);
+        const blobData = yield config.obtainBlobData(context.bindings.inRawDataBlob, context.bindings.inUpdateExecuteQueue);
         context.log('Save New Data to Raw Blob');
-        context.bindings.inoutRawDataBlob = blobData;
+        context.bindings.outRawDataBlob = blobData;
         context.log('Gzip and Save New Data to Download Blob');
         context.bindings.outDataDownloadBlob = yield gzip_1.gzipText(JSON.stringify(blobData));
         context.log('Update Lookup Table');
