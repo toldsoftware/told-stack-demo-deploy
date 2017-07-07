@@ -254,6 +254,7 @@ function runFunction(config, context, req) {
             context.res = {
                 body: lookup,
                 headers: {
+                    'Content-Type': 'application/json',
                     'Cache-Control': `public, max-age=${remainingTtl}`
                 }
             };
@@ -279,7 +280,8 @@ function runFunction(config, context, req) {
         context.res = {
             body: lookup,
             headers: {
-                'Cache-Control': `public, max-age=${config.timeExtendSeconds}`
+                'Content-Type': 'application/json',
+                'Cache-Control': `public, max-age=${config.timeExtendSeconds}`,
             }
         };
         context.done();
