@@ -26099,6 +26099,7 @@ module.exports = require("zlib");
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
+;
 class Config {
     constructor(obtainBlobData, apiRoutePath = 'api/lookup-lsc', default_storageConnectionString_AppSettingName = 'AZURE_STORAGE_CONNECTION_STRING') {
         this.obtainBlobData = obtainBlobData;
@@ -26139,7 +26140,7 @@ class Config {
         this.changeTable_partitionKey_fromQueueTrigger = `{containerName}_{blobName}`;
         this.changeTable_rowKey_fromQueueTrigger = `change`;
         this.dataRawBlob_path_fromQueueTrigger = `{containerName}/{blobName}`;
-        this.dataDownloadBlob_path_fromQueueTriggerDate = `{containerName}/{blobName}/{startTime}.gzip`;
+        this.dataDownloadBlob_path_fromQueueTriggerDate = `{containerName}/{blobName}/{timeKey}.gzip`;
     }
     getKeyFromRequest(req, bindingData) {
         const d = bindingData;
@@ -26185,7 +26186,7 @@ class Config {
     }
     getDataDownloadBlobName(blobName, lookup) {
         // TODO: Test if works with .ext and switch to underscore if needed
-        return `${blobName}/${lookup.timekey}.gzip`;
+        return `${blobName}/${lookup.timeKey}.gzip`;
     }
 }
 exports.Config = Config;
