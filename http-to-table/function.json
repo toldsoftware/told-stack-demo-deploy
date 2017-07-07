@@ -13,9 +13,18 @@
    "direction": "out"
   },
   {
+   "name": "inOutputTable",
+   "type": "table",
+   "direction": "in",
+   "tableName": "{table}",
+   "partitionKey": "{partition}",
+   "rowKey": "{row}",
+   "connection": "AZURE_STORAGE_CONNECTION_STRING"
+  },
+  {
    "name": "outOutputTable",
    "type": "table",
-   "direction": "inout",
+   "direction": "out",
    "tableName": "{table}",
    "partitionKey": "{partition}",
    "rowKey": "{row}",

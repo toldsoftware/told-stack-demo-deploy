@@ -72,7 +72,7 @@
 
 Object.defineProperty(exports, "__esModule", { value: true });
 const function_01_http_1 = __webpack_require__(138);
-const config_http_to_table_1 = __webpack_require__(139);
+const config_http_to_table_1 = __webpack_require__(140);
 const run = function (...args) {
     function_01_http_1.runFunction.apply(null, [config_http_to_table_1.config, ...args]);
 };
@@ -88,6 +88,7 @@ module.exports = global.__run;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
+const table_1 = __webpack_require__(139);
 // Http Request: Handle Update Request
 // Blob In: Read Old Lookup Blob Value
 // Queue Out: Update Request Queue
@@ -108,9 +109,18 @@ function createFunctionJson(config) {
                 direction: "out"
             },
             {
+                name: "inOutputTable",
+                type: "table",
+                direction: "in",
+                tableName: config.outputTable_tableName,
+                partitionKey: config.outputTable_partitionKey,
+                rowKey: config.outputTable_rowKey,
+                connection: config.outputTable_connection
+            },
+            {
                 name: "outOutputTable",
                 type: "table",
-                direction: "inout",
+                direction: "out",
                 tableName: config.outputTable_tableName,
                 partitionKey: config.outputTable_partitionKey,
                 rowKey: config.outputTable_rowKey,
@@ -123,7 +133,7 @@ function createFunctionJson(config) {
 exports.createFunctionJson = createFunctionJson;
 function runFunction(config, context, req) {
     const data = config.getDataFromRequest(req, context.bindingData);
-    context.bindings.outOutputTable = data;
+    table_1.insertOrMergeTableRow(context.bindings.inOutputTable, context.bindings.outOutputTable, data);
     // context.log('The Data was Queued', data);
     context.res = {
         body: 'The Data was Stored in a Table'
@@ -142,13 +152,34 @@ exports.runFunction = runFunction;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-const config_1 = __webpack_require__(140);
+function insertOrMergeTableRow(table_in, table_out, data) {
+    if (table_in) {
+        for (let k in data) {
+            table_in[k] = data[k];
+        }
+    }
+    else {
+        table_out = data;
+    }
+}
+exports.insertOrMergeTableRow = insertOrMergeTableRow;
+//# sourceMappingURL=table.js.map
+
+/***/ }),
+
+/***/ 140:
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+const config_1 = __webpack_require__(141);
 exports.config = new config_1.Config();
 
 
 /***/ }),
 
-/***/ 140:
+/***/ 141:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
