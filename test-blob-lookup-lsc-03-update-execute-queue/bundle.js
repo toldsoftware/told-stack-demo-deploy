@@ -60,7 +60,7 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 264);
+/******/ 	return __webpack_require__(__webpack_require__.s = 268);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -368,7 +368,7 @@ module.exports = _setExports(process.env.NODE_NDEBUG);
 /* 4 */
 /***/ (function(module, exports) {
 
-﻿// 
+// 
 // Copyright (c) Microsoft and contributors.  All rights reserved.
 // 
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -15414,7 +15414,7 @@ module.exports = BlobUtilities;
 /* 49 */
 /***/ (function(module, exports) {
 
-﻿// 
+// 
 // Copyright (c) Microsoft and contributors.  All rights reserved.
 // 
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -17582,7 +17582,7 @@ module.exports = RetryPolicyFilter;
 /* 65 */
 /***/ (function(module, exports, __webpack_require__) {
 
-﻿// 
+// 
 // Copyright (c) Microsoft and contributors.  All rights reserved.
 // 
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -18413,7 +18413,7 @@ module.exports = RangeStream;
 /* 70 */
 /***/ (function(module, exports, __webpack_require__) {
 
-﻿// 
+// 
 // Copyright (c) Microsoft and contributors.  All rights reserved.
 // 
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -23903,7 +23903,7 @@ exports.parse = function (servicePropertiesXml) {
 /* 104 */
 /***/ (function(module, exports, __webpack_require__) {
 
-﻿// 
+// 
 // Copyright (c) Microsoft and contributors.  All rights reserved.
 // 
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -24408,7 +24408,7 @@ module.exports = SharedKey;
 /* 105 */
 /***/ (function(module, exports, __webpack_require__) {
 
-﻿// 
+// 
 // Copyright (c) Microsoft and contributors.  All rights reserved.
 // 
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -24456,7 +24456,7 @@ module.exports = HmacSha256Sign;
 /* 106 */
 /***/ (function(module, exports, __webpack_require__) {
 
-﻿// 
+// 
 // Copyright (c) Microsoft and contributors.  All rights reserved.
 // 
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -25054,7 +25054,7 @@ exports.setTableRequestHeadersAndBody = function (webResource, body, acceptType)
 /* 110 */
 /***/ (function(module, exports, __webpack_require__) {
 
-﻿// 
+// 
 // Copyright (c) Microsoft and contributors.  All rights reserved.
 // 
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -25479,7 +25479,7 @@ exports.serializeQueryValue = function (value, type) {
 /* 112 */
 /***/ (function(module, exports, __webpack_require__) {
 
-﻿// 
+// 
 // Copyright (c) Microsoft and contributors.  All rights reserved.
 // 
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -26112,9 +26112,9 @@ class Config {
         this.maxPollCount = 5;
         this.domain = '/';
         this.blobProxyRoutePath = 'blob';
-        this.lookupBlob_connection = this.default_storageConnectionString_AppSettingName;
         this.updateRequestQueue_connection = this.default_storageConnectionString_AppSettingName;
         this.updateExecuteQueue_connection = this.default_storageConnectionString_AppSettingName;
+        this.lookupTable_connection = this.default_storageConnectionString_AppSettingName;
         this.changeTable_connection = this.default_storageConnectionString_AppSettingName;
         this.dataRawBlob_connection = this.default_storageConnectionString_AppSettingName;
         this.dataDownloadBlob_connection = this.default_storageConnectionString_AppSettingName;
@@ -26126,7 +26126,6 @@ class Config {
         this.updateExecuteQueue_queueName = 'lookup-lsc-update-execute-queue';
         // These will encode to a url that receives parametes
         // Example: '{container}/{blob}/_lookup.txt'
-        this.lookupBlob_path = `{container}/{blob}/_lookup.txt`;
         this.lookupTable_tableName = `blobaccess`;
         this.lookupTable_partitionKey = `{container}_{blob}`;
         this.lookupTable_rowKey = `lookup`;
@@ -26190,7 +26189,7 @@ class Config {
     }
 }
 exports.Config = Config;
-//# sourceMappingURL=config.js.map
+
 
 /***/ }),
 /* 116 */
@@ -29745,7 +29744,7 @@ function write (chunk) {
 /* 121 */
 /***/ (function(module, exports, __webpack_require__) {
 
-﻿// 
+// 
 // Copyright (c) Microsoft and contributors.  All rights reserved.
 // 
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -61436,7 +61435,7 @@ exports.parse = function (serviceStatsXml) {
 /* 216 */
 /***/ (function(module, exports, __webpack_require__) {
 
-﻿// 
+// 
 // Copyright (c) Microsoft and contributors.  All rights reserved.
 // 
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -61564,7 +61563,7 @@ exports.parse = function (signedIdentifiersXml) {
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-﻿// 
+// 
 // Copyright (c) Microsoft and contributors.  All rights reserved.
 // 
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -61646,7 +61645,7 @@ module.exports = LinearRetryPolicyFilter;
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-﻿// 
+// 
 // Copyright (c) Microsoft and contributors.  All rights reserved.
 // 
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -62877,7 +62876,7 @@ exports.generateSequenceNumberLessThanOrEqualCondition = function (sequenceNumbe
 /* 225 */
 /***/ (function(module, exports, __webpack_require__) {
 
-﻿// 
+// 
 // Copyright (c) Microsoft and contributors.  All rights reserved.
 // 
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -62974,7 +62973,7 @@ module.exports = SharedKeyTable;
 /* 226 */
 /***/ (function(module, exports, __webpack_require__) {
 
-﻿// 
+// 
 // Copyright (c) Microsoft and contributors.  All rights reserved.
 // 
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -63253,7 +63252,7 @@ module.exports = BatchResult;
 /* 228 */
 /***/ (function(module, exports, __webpack_require__) {
 
-﻿// 
+// 
 // Copyright (c) Microsoft and contributors.  All rights reserved.
 // 
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -70060,7 +70059,7 @@ module.exports = PageRangeStream;
 /* 234 */
 /***/ (function(module, exports, __webpack_require__) {
 
-﻿// 
+// 
 // Copyright (c) Microsoft and contributors.  All rights reserved.
 // 
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -70150,7 +70149,7 @@ exports.parse = function (blockListXml) {
 /* 235 */
 /***/ (function(module, exports, __webpack_require__) {
 
-﻿// 
+// 
 // Copyright (c) Microsoft and contributors.  All rights reserved.
 // 
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -70438,7 +70437,7 @@ module.exports = BlobResult;
 /* 236 */
 /***/ (function(module, exports, __webpack_require__) {
 
-﻿// 
+// 
 // Copyright (c) Microsoft and contributors.  All rights reserved.
 // 
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -70559,7 +70558,7 @@ module.exports = ContainerResult;
 /* 237 */
 /***/ (function(module, exports, __webpack_require__) {
 
-﻿// 
+// 
 // Copyright (c) Microsoft and contributors.  All rights reserved.
 // 
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -76863,7 +76862,7 @@ module.exports = FileResult;
 /* 245 */
 /***/ (function(module, exports, __webpack_require__) {
 
-﻿// 
+// 
 // Copyright (c) Microsoft and contributors.  All rights reserved.
 // 
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -78335,7 +78334,7 @@ module.exports = QueueService;
 /* 246 */
 /***/ (function(module, exports, __webpack_require__) {
 
-﻿// 
+// 
 // Copyright (c) Microsoft and contributors.  All rights reserved.
 // 
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -78412,7 +78411,7 @@ module.exports = QueueResult;
 /* 247 */
 /***/ (function(module, exports, __webpack_require__) {
 
-﻿// 
+// 
 // Copyright (c) Microsoft and contributors.  All rights reserved.
 // 
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -78617,7 +78616,7 @@ function asyncIt(call) {
     });
 }
 exports.asyncIt = asyncIt;
-//# sourceMappingURL=async-it.js.map
+
 
 /***/ }),
 /* 250 */
@@ -78647,7 +78646,7 @@ function insertOrMergeTableRow_sdk(rowKey, table_in, data) {
     });
 }
 exports.insertOrMergeTableRow_sdk = insertOrMergeTableRow_sdk;
-//# sourceMappingURL=tables-sdk.js.map
+
 
 /***/ }),
 /* 251 */
@@ -78783,7 +78782,7 @@ function convertToEntityValue(value) {
         return entGen.String(JSON.stringify(value));
     }
 }
-//# sourceMappingURL=tables.js.map
+
 
 /***/ }),
 /* 252 */,
@@ -78888,7 +78887,7 @@ function createFunctionJson(config) {
                 tableName: config.lookupTable_tableName_fromQueueTrigger,
                 partitionKey: config.lookupTable_partitionKey_fromQueueTrigger,
                 rowKey: config.lookupTable_rowKey_fromQueueTrigger,
-                connection: config.lookupBlob_connection,
+                connection: config.lookupTable_connection,
             },
             {
                 name: "outLookupTable",
@@ -78897,7 +78896,7 @@ function createFunctionJson(config) {
                 tableName: config.lookupTable_tableName_fromQueueTrigger,
                 partitionKey: config.lookupTable_partitionKey_fromQueueTrigger,
                 rowKey: config.lookupTable_rowKey_fromQueueTrigger,
-                connection: config.lookupBlob_connection,
+                connection: config.lookupTable_connection,
             },
         ],
         disabled: false
@@ -78924,7 +78923,7 @@ function runFunction(config, context) {
     });
 }
 exports.runFunction = runFunction;
-//# sourceMappingURL=function-03-update-execute-queue.js.map
+
 
 /***/ }),
 /* 258 */
@@ -78955,7 +78954,7 @@ function gzipText(dataJson) {
     });
 }
 exports.gzipText = gzipText;
-//# sourceMappingURL=gzip.js.map
+
 
 /***/ }),
 /* 259 */,
@@ -78963,7 +78962,11 @@ exports.gzipText = gzipText;
 /* 261 */,
 /* 262 */,
 /* 263 */,
-/* 264 */
+/* 264 */,
+/* 265 */,
+/* 266 */,
+/* 267 */,
+/* 268 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -78980,3 +78983,4 @@ module.exports = global.__run;
 
 /***/ })
 /******/ ]);
+//# sourceMappingURL=bundle.js.map

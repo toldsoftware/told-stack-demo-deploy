@@ -60,19 +60,19 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 269);
+/******/ 	return __webpack_require__(__webpack_require__.s = 263);
 /******/ })
 /************************************************************************/
 /******/ ({
 
-/***/ 269:
+/***/ 263:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-const function_01_http_1 = __webpack_require__(270);
-const config_http_to_queue_1 = __webpack_require__(271);
+const function_01_http_1 = __webpack_require__(264);
+const config_http_to_queue_1 = __webpack_require__(265);
 const run = function (...args) {
     function_01_http_1.runFunction.apply(null, [config_http_to_queue_1.config, ...args]);
 };
@@ -82,7 +82,7 @@ module.exports = global.__run;
 
 /***/ }),
 
-/***/ 270:
+/***/ 264:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -124,29 +124,32 @@ function runFunction(config, context, req) {
     context.bindings.outOutputQueue = data;
     // context.log('The Data was Queued', data);
     context.res = {
-        body: 'The Data was Queued'
+        body: 'The Data was Queued',
+        headers: {
+            'Content-Type': 'text/plain'
+        }
     };
     context.done();
 }
 exports.runFunction = runFunction;
 ;
-//# sourceMappingURL=function-01-http.js.map
+
 
 /***/ }),
 
-/***/ 271:
+/***/ 265:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-const config_1 = __webpack_require__(272);
+const config_1 = __webpack_require__(266);
 exports.config = new config_1.Config();
 
 
 /***/ }),
 
-/***/ 272:
+/***/ 266:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -165,8 +168,9 @@ class Config {
     }
 }
 exports.Config = Config;
-//# sourceMappingURL=config.js.map
+
 
 /***/ })
 
 /******/ });
+//# sourceMappingURL=bundle.js.map

@@ -60,21 +60,21 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 259);
+/******/ 	return __webpack_require__(__webpack_require__.s = 255);
 /******/ })
 /************************************************************************/
 /******/ ({
 
-/***/ 259:
+/***/ 255:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-const function_01_http_1 = __webpack_require__(260);
-const config_http_early_response_1 = __webpack_require__(261);
+const function_01_http_1 = __webpack_require__(256);
+const config_http_echo_1 = __webpack_require__(257);
 const run = function (...args) {
-    function_01_http_1.runFunction.apply(null, [config_http_early_response_1.config, ...args]);
+    function_01_http_1.runFunction.apply(null, [config_http_echo_1.config, ...args]);
 };
 global.__run = run;
 module.exports = global.__run;
@@ -82,7 +82,7 @@ module.exports = global.__run;
 
 /***/ }),
 
-/***/ 260:
+/***/ 256:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -107,38 +107,22 @@ function createFunctionJson(config) {
                 type: "http",
                 direction: "out"
             },
-            {
-                name: "outOutputQueue",
-                type: "queue",
-                direction: "out",
-                queueName: config.outputQueue_queueName,
-                connection: config.outputQueue_connection
-            },
         ],
         disabled: false
     };
 }
 exports.createFunctionJson = createFunctionJson;
 function runFunction(config, context, req) {
-    context.log('START Immediate Response');
+    context.log('START');
+    const data = config.getDataFromRequest(req, context.bindingData);
     context.res = {
-        body: 'The Data will be Queued',
+        body: data,
         headers: {
-            'Content-Type': 'text/plain'
+            'Content-Type': 'application/json'
         }
     };
-    // EXPERIMENT: Will the response be sent before the done call?
-    // Wait 5 Seconds before marking done
-    // Test how quickly the response is received.
-    // RESULT: The response is not processed until context.done() is called
-    context.log('Wait 5 Seconds');
-    setTimeout(() => {
-        context.log('Queue Message');
-        const data = config.getDataFromRequest(req, context.bindingData);
-        context.bindings.outOutputQueue = data;
-        context.log('DONE');
-        context.done();
-    }, 5000);
+    context.log('DONE');
+    context.done();
 }
 exports.runFunction = runFunction;
 ;
@@ -146,34 +130,32 @@ exports.runFunction = runFunction;
 
 /***/ }),
 
-/***/ 261:
+/***/ 257:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-const config_1 = __webpack_require__(262);
+const config_1 = __webpack_require__(258);
 exports.config = new config_1.Config();
 
 
 /***/ }),
 
-/***/ 262:
+/***/ 258:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
 class Config {
-    constructor(http_routeRoot = 'api/http-early-response', default_storageConnectionString_AppSettingName = 'AZURE_STORAGE_CONNECTION_STRING') {
+    constructor(http_routeRoot = 'api/http-echo', default_storageConnectionString_AppSettingName = 'AZURE_STORAGE_CONNECTION_STRING') {
         this.http_routeRoot = http_routeRoot;
         this.default_storageConnectionString_AppSettingName = default_storageConnectionString_AppSettingName;
-        this.http_route = this.http_routeRoot + '/{key}';
-        this.outputQueue_queueName = 'http-to-queue-output-queue';
-        this.outputQueue_connection = this.default_storageConnectionString_AppSettingName;
+        this.http_route = this.http_routeRoot + '/{*path}';
     }
     getDataFromRequest(req, bindingData) {
-        return { key: bindingData.key, value: req.body };
+        return { key: { path: bindingData.path }, value: req.body };
     }
 }
 exports.Config = Config;

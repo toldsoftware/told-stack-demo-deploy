@@ -60,7 +60,7 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 262);
+/******/ 	return __webpack_require__(__webpack_require__.s = 266);
 /******/ })
 /************************************************************************/
 /******/ ({
@@ -84,9 +84,9 @@ class Config {
         this.maxPollCount = 5;
         this.domain = '/';
         this.blobProxyRoutePath = 'blob';
-        this.lookupBlob_connection = this.default_storageConnectionString_AppSettingName;
         this.updateRequestQueue_connection = this.default_storageConnectionString_AppSettingName;
         this.updateExecuteQueue_connection = this.default_storageConnectionString_AppSettingName;
+        this.lookupTable_connection = this.default_storageConnectionString_AppSettingName;
         this.changeTable_connection = this.default_storageConnectionString_AppSettingName;
         this.dataRawBlob_connection = this.default_storageConnectionString_AppSettingName;
         this.dataDownloadBlob_connection = this.default_storageConnectionString_AppSettingName;
@@ -98,7 +98,6 @@ class Config {
         this.updateExecuteQueue_queueName = 'lookup-lsc-update-execute-queue';
         // These will encode to a url that receives parametes
         // Example: '{container}/{blob}/_lookup.txt'
-        this.lookupBlob_path = `{container}/{blob}/_lookup.txt`;
         this.lookupTable_tableName = `blobaccess`;
         this.lookupTable_partitionKey = `{container}_{blob}`;
         this.lookupTable_rowKey = `lookup`;
@@ -162,7 +161,7 @@ class Config {
     }
 }
 exports.Config = Config;
-//# sourceMappingURL=config.js.map
+
 
 /***/ }),
 
@@ -249,7 +248,7 @@ function createFunctionJson(config) {
                 tableName: config.lookupTable_tableName,
                 partitionKey: config.lookupTable_partitionKey,
                 rowKey: config.lookupTable_rowKey,
-                connection: config.lookupBlob_connection
+                connection: config.lookupTable_connection
             },
             {
                 name: "outUpdateRequestQueue",
@@ -327,11 +326,11 @@ function runFunction(config, context, req) {
 }
 exports.runFunction = runFunction;
 ;
-//# sourceMappingURL=function-01-http.js.map
+
 
 /***/ }),
 
-/***/ 262:
+/***/ 266:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -349,3 +348,4 @@ module.exports = global.__run;
 /***/ })
 
 /******/ });
+//# sourceMappingURL=bundle.js.map

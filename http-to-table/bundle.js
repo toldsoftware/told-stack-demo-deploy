@@ -60,19 +60,19 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 277);
+/******/ 	return __webpack_require__(__webpack_require__.s = 271);
 /******/ })
 /************************************************************************/
 /******/ ({
 
-/***/ 277:
+/***/ 271:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-const function_01_http_1 = __webpack_require__(278);
-const config_http_to_table_1 = __webpack_require__(279);
+const function_01_http_1 = __webpack_require__(272);
+const config_http_to_table_1 = __webpack_require__(273);
 const run = function (...args) {
     function_01_http_1.runFunction.apply(null, [config_http_to_table_1.config, ...args]);
 };
@@ -82,7 +82,7 @@ module.exports = global.__run;
 
 /***/ }),
 
-/***/ 278:
+/***/ 272:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -145,29 +145,32 @@ function runFunction(config, context, req) {
     }
     // context.log('The Data was Queued', data);
     context.res = {
-        body: 'The Data was Stored in a Table'
+        body: 'The Data was Stored in a Table',
+        headers: {
+            'Content-Type': 'text/plain'
+        }
     };
     context.done();
 }
 exports.runFunction = runFunction;
 ;
-//# sourceMappingURL=function-01-http.js.map
+
 
 /***/ }),
 
-/***/ 279:
+/***/ 273:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-const config_1 = __webpack_require__(280);
+const config_1 = __webpack_require__(274);
 exports.config = new config_1.Config();
 
 
 /***/ }),
 
-/***/ 280:
+/***/ 274:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -189,8 +192,9 @@ class Config {
     }
 }
 exports.Config = Config;
-//# sourceMappingURL=config.js.map
+
 
 /***/ })
 
 /******/ });
+//# sourceMappingURL=bundle.js.map
