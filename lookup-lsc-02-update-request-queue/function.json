@@ -43,7 +43,7 @@
    "name": "outDataDownloadBlob",
    "type": "blob",
    "direction": "out",
-   "path": "{containerName}/{blobName}/{timeKey}",
+   "path": "{containerName}/{blobName}/{timeKey}_gzip",
    "connection": "AZURE_STORAGE_CONNECTION_STRING"
   }
  ],

@@ -78656,7 +78656,7 @@ class ClientConfig {
         this.lookup_route = 'api/lookup-lsc';
         this.downloadBlob_domain = '/';
         this.downloadBlob_route = 'blob';
-        this.shouldGzipDownloadBlob = false;
+        this.shouldGzipDownloadBlob = true;
         Object.assign(this, options);
     }
     getLookupUrl(key) {
