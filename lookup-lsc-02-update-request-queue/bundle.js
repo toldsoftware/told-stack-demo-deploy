@@ -78561,26 +78561,26 @@ class ServerConfig {
         this.changeTable_connection = this.default_storageConnectionString_AppSettingName;
         this.dataRawBlob_connection = this.default_storageConnectionString_AppSettingName;
         this.dataDownloadBlob_connection = this.default_storageConnectionString_AppSettingName;
-        // Slash in blobName is not supported (i.e. {*blob}) because table partitionKey/rowKey cannot / in the name
-        // http_route = this.apiRoutePath + '/{container}/{*blob}';
-        this.http_route = this.clientConfig.lookup_route + '/{container}/{blob}';
+        // Slash in blobName is not supported (i.e. {*blobName}) because table partitionKey/rowKey cannot / in the name
+        // http_route = this.apiRoutePath + '/{containerName}/{*blobName}';
+        this.http_route = this.clientConfig.lookup_route + '/{containerName}/{blobName}';
         this.getDataDownloadBlobName = this.clientConfig.getDataDownloadBlobName;
         this.dataRawBlob_path_fromQueueTrigger = `{containerName}/{blobName}`;
         this.dataDownloadBlob_path_from_queueTriggerDate = `{containerName}/{blobName}/{timeKey}.gzip`;
+        this.http_dataDownload_route = this.clientConfig.downloadBlob_route + '/{containerName}/{blobName}/{timeKey}';
         this.dataDownloadBlob_path_from_http_dataDownload_route = `{containerName}/{blobName}/{timeKey}.gzip`;
-        this.http_dataDownload_route = this.clientConfig.downloadBlob_route + '/{container}/{blob}/{timeKey}';
         this.updateRequestQueue_queueName = 'lookup-lsc-update-request-queue';
         this.updateExecuteQueue_queueName = 'lookup-lsc-update-execute-queue';
         // These will encode to a url that receives parametes
-        // Example: '{container}/{blob}/_lookup.txt'
+        // Example: '{containerName}/{blobName}/_lookup.txt'
         this.lookupTable_tableName = `blobaccess`;
-        this.lookupTable_partitionKey = `{container}_{blob}`;
+        this.lookupTable_partitionKey = `{containerName}_{blobName}`;
         this.lookupTable_rowKey = `lookup`;
         this.lookupTable_tableName_fromQueueTrigger = `blobaccess`;
         this.lookupTable_partitionKey_fromQueueTrigger = `{containerName}_{blobName}`;
         this.lookupTable_rowKey_fromQueueTrigger = `lookup`;
         this.changeTable_tableName = `blobaccess`;
-        this.changeTable_partitionKey = `{container}_{blob}`;
+        this.changeTable_partitionKey = `{containerName}_{blobName}`;
         this.changeTable_rowKey = `change`;
         this.changeTable_tableName_fromQueueTrigger = `blobaccess`;
         this.changeTable_partitionKey_fromQueueTrigger = `{containerName}_{blobName}`;
@@ -78589,8 +78589,8 @@ class ServerConfig {
     getKeyFromRequest(req, bindingData) {
         const d = bindingData;
         return {
-            containerName: d.container,
-            blobName: d.blob,
+            containerName: d.containerName,
+            blobName: d.blobName,
         };
     }
     getLookupTableRowKey_fromQueueTrigger(queueTrigger) {

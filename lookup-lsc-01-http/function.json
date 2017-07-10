@@ -5,7 +5,7 @@
    "type": "httpTrigger",
    "direction": "in",
    "authLevel": "anonymous",
-   "route": "api/lookup-lsc/{container}/{blob}"
+   "route": "api/lookup-lsc/{containerName}/{blobName}"
   },
   {
    "name": "res",
@@ -17,7 +17,7 @@
    "type": "table",
    "direction": "in",
    "tableName": "blobaccess",
-   "partitionKey": "{container}_{blob}",
+   "partitionKey": "{containerName}_{blobName}",
    "rowKey": "lookup",
    "connection": "AZURE_STORAGE_CONNECTION_STRING"
   },

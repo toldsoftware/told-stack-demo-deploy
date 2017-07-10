@@ -5,7 +5,7 @@
    "type": "httpTrigger",
    "direction": "in",
    "authLevel": "anonymous",
-   "route": "api/lookup-lsc-download/{container}/{blob}/{timeKey}"
+   "route": "api/lookup-lsc-download/{containerName}/{blobName}/{timeKey}"
   },
   {
    "name": "res",
