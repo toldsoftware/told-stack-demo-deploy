@@ -82,6 +82,10 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const server_config_1 = __webpack_require__(250);
 const config_lookup_lsc_1 = __webpack_require__(251);
 exports.config = new server_config_1.ServerConfig(config_lookup_lsc_1.clientConfig, () => __awaiter(this, void 0, void 0, function* () { return { data: 'TEST ' + new Date() }; }));
+// Test Fast Change
+exports.config.timeToLiveSeconds = 5;
+exports.config.timeExtendSeconds = 1;
+exports.config.timeExecutionSeconds = 1;
 
 
 /***/ }),
@@ -207,6 +211,9 @@ class ClientConfig {
         this.lookup_route = 'api/lookup-lsc';
         this.downloadBlob_domain = '/';
         this.downloadBlob_route = 'blob';
+        // WARNING: Gzip is not working in the 4th step: Reading from .gzip blob with node and sending to client
+        // In addition, since using a function instead of proxy, gzip is done automatically by the function
+        // So it is not needed, and would only be useful to reduce storage size at the cost of increased processing
         this.shouldGzipDownloadBlob = false;
         Object.assign(this, options);
     }
