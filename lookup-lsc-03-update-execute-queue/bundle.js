@@ -78982,7 +78982,7 @@ function runFunction(config, context) {
         // 'Content-Type': 'application/json',
         // 'Cache-Control': `public, max-age=${config.timeCacheControlSeconds_downloadBlob||4*StaleTimeout?}`,
         context.log('Gzip and Save New Data to Download Blob');
-        context.bindings.outDataDownloadBlob = yield gzip_1.gzipText(JSON.stringify(blobData));
+        context.bindings.outDataDownloadBlob = config.shouldGzip ? yield gzip_1.gzipText(JSON.stringify(blobData)) : JSON.stringify(blobData);
         context.log('Update Lookup Table');
         // context.bindings.outLookupTable = { startTime: context.bindings.inUpdateExecuteQueue.startTime };
         context.bindings.outLookupTable = yield tables_sdk_1.insertOrMergeTableRow_sdk(config.getLookupTableRowKey_fromQueueTrigger(context.bindings.inUpdateExecuteQueue), context.bindings.inLookupTable, { timeKey: context.bindings.inUpdateExecuteQueue.timeKey });

@@ -323,7 +323,7 @@ function runFunction(config, context, req) {
         return function_01_http_1.runFunction({
             responseOptions: {
                 cacheControl: 'public, max-age=' + (config.timeToLiveSeconds * 4),
-                contentEncoding: 'gzip',
+                contentEncoding: config.shouldGzip ? 'gzip' : undefined,
                 contentType: 'application/json',
             }
         }, context, req);
