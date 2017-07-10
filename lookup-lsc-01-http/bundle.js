@@ -82,10 +82,10 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const server_config_1 = __webpack_require__(250);
 const config_lookup_lsc_1 = __webpack_require__(251);
 exports.config = new server_config_1.ServerConfig(config_lookup_lsc_1.clientConfig, () => __awaiter(this, void 0, void 0, function* () { return { data: 'TEST ' + new Date() }; }));
-// Test Fast Change
-exports.config.timeToLiveSeconds = 1;
-exports.config.timeExtendSeconds = 1;
-exports.config.timeExecutionSeconds = 1;
+// // Test Fast Change
+// config.timeToLiveSeconds = 1;
+// config.timeExtendSeconds = 1;
+// config.timeExecutionSeconds = 1; 
 
 
 /***/ }),
@@ -137,6 +137,7 @@ class ServerConfig {
         this.changeTable_partitionKey_fromQueueTrigger = `{containerName}_{blobName}`;
         this.changeTable_rowKey_fromQueueTrigger = `change`;
     }
+    get timeToLiveSeconds_downloadBlob() { return this.timeToLiveSeconds * 4 + 300; }
     getDataDownloadBlobName_from_queueMessage(message) {
         return `${message.blobName}/${message.timeKey}${this.shouldGzip ? '_gzip' : ''}`;
     }
