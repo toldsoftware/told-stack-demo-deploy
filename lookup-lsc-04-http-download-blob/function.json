@@ -5,19 +5,12 @@
    "type": "httpTrigger",
    "direction": "in",
    "authLevel": "anonymous",
-   "route": "api/lookup-lsc-download/{containerName}/{blobName}/{timeKey}"
+   "route": "api/lookup-lsc-download/{containerName}/{blobName}/{timeKeyWithGzip}"
   },
   {
    "name": "res",
    "type": "http",
    "direction": "out"
-  },
-  {
-   "name": "inInputBlob",
-   "type": "blob",
-   "direction": "in",
-   "path": "{containerName}/{blobName}/{timeKey}_gzip",
-   "connection": "AZURE_STORAGE_CONNECTION_STRING"
   }
  ],
  "disabled": false

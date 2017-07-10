@@ -65,7 +65,24 @@
 /************************************************************************/
 /******/ ({
 
-/***/ 255:
+/***/ 280:
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+const function_01_http_1 = __webpack_require__(281);
+const config_http_input_blob_1 = __webpack_require__(282);
+const run = function (...args) {
+    function_01_http_1.runFunction.apply(null, [config_http_input_blob_1.config, ...args]);
+};
+global.__run = run;
+module.exports = global.__run;
+
+
+/***/ }),
+
+/***/ 281:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -104,6 +121,7 @@ function createFunctionJson(config) {
 exports.createFunctionJson = createFunctionJson;
 function runFunction(config, context, req) {
     const data = context.bindings.inInputBlob;
+    context.log('http-input-blob', data);
     context.res = {
         body: data,
         headers: {
@@ -120,36 +138,19 @@ exports.runFunction = runFunction;
 
 /***/ }),
 
-/***/ 280:
+/***/ 282:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-const function_01_http_1 = __webpack_require__(255);
-const config_http_input_blob_1 = __webpack_require__(281);
-const run = function (...args) {
-    function_01_http_1.runFunction.apply(null, [config_http_input_blob_1.config, ...args]);
-};
-global.__run = run;
-module.exports = global.__run;
-
-
-/***/ }),
-
-/***/ 281:
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-const config_1 = __webpack_require__(282);
+const config_1 = __webpack_require__(283);
 exports.config = new config_1.Config();
 
 
 /***/ }),
 
-/***/ 282:
+/***/ 283:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
