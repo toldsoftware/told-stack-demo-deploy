@@ -78588,7 +78588,7 @@ class ServerConfig {
         this.changeTable_rowKey_fromQueueTrigger = `change`;
     }
     getDataDownloadBlobName_from_queueMessage(message) {
-        return `${message.blobName}/{message.timeKey}${this.shouldGzip ? '_gzip' : ''}`;
+        return `${message.blobName}/${message.timeKey}${this.shouldGzip ? '_gzip' : ''}`;
     }
     getKeyFromRequest(req, bindingData) {
         const d = bindingData;
