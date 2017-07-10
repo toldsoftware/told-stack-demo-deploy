@@ -78538,7 +78538,7 @@ const server_config_1 = __webpack_require__(250);
 const config_lookup_lsc_1 = __webpack_require__(251);
 exports.config = new server_config_1.ServerConfig(config_lookup_lsc_1.clientConfig, () => __awaiter(this, void 0, void 0, function* () { return { data: 'TEST ' + new Date() }; }));
 // Test Fast Change
-exports.config.timeToLiveSeconds = 5;
+exports.config.timeToLiveSeconds = 1;
 exports.config.timeExtendSeconds = 1;
 exports.config.timeExecutionSeconds = 1;
 
@@ -78640,9 +78640,11 @@ exports.ServerConfig = ServerConfig;
 Object.defineProperty(exports, "__esModule", { value: true });
 const client_config_1 = __webpack_require__(252);
 exports.clientConfig = new client_config_1.ClientConfig({
-    lookup_domain: 'https://told-stack-demo.azurewebsites.net',
+    // lookup_domain: 'https://told-stack-demo.azurewebsites.net',
+    // downloadBlob_domain: 'https://told-stack-demo.azurewebsites.net',
+    lookup_domain: 'https://told-stack-demo.azureedge.net',
+    downloadBlob_domain: 'https://told-stack-demo.azureedge.net',
     lookup_route: 'api/lookup-lsc',
-    downloadBlob_domain: 'https://told-stack-demo.azurewebsites.net',
     downloadBlob_route: 'api/lookup-lsc-download'
 });
 
