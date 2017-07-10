@@ -101,6 +101,7 @@ class ServerConfig {
         this.timeExtendSeconds = 1;
         this.timeExecutionSeconds = 10;
         this.timePollSeconds = this.clientConfig.timePollSeconds;
+        this.shouldGzip = this.clientConfig.shouldGzipDownloadBlob;
         this.updateRequestQueue_connection = this.default_storageConnectionString_AppSettingName;
         this.updateExecuteQueue_connection = this.default_storageConnectionString_AppSettingName;
         this.lookupTable_connection = this.default_storageConnectionString_AppSettingName;
@@ -112,9 +113,9 @@ class ServerConfig {
         this.http_route = this.clientConfig.lookup_route + '/{containerName}/{blobName}';
         this.getDataDownloadBlobName = this.clientConfig.getDataDownloadBlobName;
         this.dataRawBlob_path_fromQueueTrigger = `{containerName}/{blobName}`;
-        this.dataDownloadBlob_path_from_queueTriggerDate = `{containerName}/{blobName}/{timeKey}.gzip`;
+        this.dataDownloadBlob_path_from_queueTriggerDate = `{containerName}/{blobName}/{timeKey}${this.shouldGzip ? '_gzip' : ''}`;
         this.http_dataDownload_route = this.clientConfig.downloadBlob_route + '/{containerName}/{blobName}/{timeKey}';
-        this.dataDownloadBlob_path_from_http_dataDownload_route = `{containerName}/{blobName}/{timeKey}.gzip`;
+        this.dataDownloadBlob_path_from_http_dataDownload_route = `{containerName}/{blobName}/{timeKey}${this.shouldGzip ? '_gzip' : ''}`;
         this.updateRequestQueue_queueName = 'lookup-lsc-update-request-queue';
         this.updateExecuteQueue_queueName = 'lookup-lsc-update-execute-queue';
         // These will encode to a url that receives parametes
@@ -203,6 +204,7 @@ class ClientConfig {
         this.lookup_route = 'api/lookup-lsc';
         this.downloadBlob_domain = '/';
         this.downloadBlob_route = 'blob';
+        this.shouldGzipDownloadBlob = false;
         Object.assign(this, options);
     }
     getLookupUrl(key) {
@@ -213,7 +215,7 @@ class ClientConfig {
     }
     getDataDownloadBlobName(blobName, lookup) {
         // TODO: Test if works with .ext and switch to underscore if needed
-        return `${blobName}/${lookup.timeKey}.gzip`;
+        return `${blobName}/${lookup.timeKey}${this.shouldGzipDownloadBlob ? '_gzip' : ''}`;
     }
 }
 exports.ClientConfig = ClientConfig;

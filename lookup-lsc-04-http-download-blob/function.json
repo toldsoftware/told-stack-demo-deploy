@@ -16,7 +16,7 @@
    "name": "inInputBlob",
    "type": "blob",
    "direction": "in",
-   "path": "{containerName}/{blobName}/{timeKey}.gzip",
+   "path": "{containerName}/{blobName}/{timeKey}",
    "connection": "AZURE_STORAGE_CONNECTION_STRING"
   }
  ],
