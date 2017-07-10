@@ -78719,6 +78719,16 @@ function readBlob(containerName, blobName) {
     });
 }
 exports.readBlob = readBlob;
+function readBlobBuffer(containerName, blobName) {
+    return __awaiter(this, void 0, void 0, function* () {
+        const text = yield readBlobAsText(containerName, blobName);
+        if (!text) {
+            return null;
+        }
+        return JSON.parse(text);
+    });
+}
+exports.readBlobBuffer = readBlobBuffer;
 function writeBlobAsText(containerName, blobName, text, blobOptions) {
     return __awaiter(this, void 0, void 0, function* () {
         const blobService = azure_storage_1.createBlobService();
@@ -78732,6 +78742,13 @@ function writeBlob(containerName, blobName, data, blobOptions) {
     });
 }
 exports.writeBlob = writeBlob;
+function writeBlobBuffer(containerName, blobName, data, blobOptions) {
+    return __awaiter(this, void 0, void 0, function* () {
+        const blobService = azure_storage_1.createBlobService();
+        return yield async_it_1.asyncIt(cb => blobService.createBlockBlobFromText(containerName, blobName, data, blobOptions, cb));
+    });
+}
+exports.writeBlobBuffer = writeBlobBuffer;
 
 
 /***/ }),
@@ -78832,7 +78849,7 @@ exports.createFunctionJson = createFunctionJson;
 function runFunction(config, context, req) {
     return __awaiter(this, void 0, void 0, function* () {
         context.log('http-download-blob START');
-        const data = yield blobs_1.readBlob(context.bindingData.containerName, context.bindingData.blobName + '/' + context.bindingData.timeKeyWithGzip);
+        const data = yield blobs_1.readBlobBuffer(context.bindingData.containerName, context.bindingData.blobName + '/' + context.bindingData.timeKeyWithGzip);
         context.log('http-download-blob', data);
         context.res = {
             body: data,
