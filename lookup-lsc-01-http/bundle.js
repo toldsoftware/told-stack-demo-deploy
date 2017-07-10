@@ -113,7 +113,7 @@ class ServerConfig {
         this.http_route = this.clientConfig.lookup_route + '/{containerName}/{blobName}';
         this.getDataDownloadBlobName = this.clientConfig.getDataDownloadBlobName;
         this.dataRawBlob_path_fromQueueTrigger = `{containerName}/{blobName}`;
-        this.dataDownloadBlob_path_from_queueTriggerDate = `{containerName}/{blobName}/{timeKey}${this.shouldGzip ? '_gzip' : ''}`;
+        this.dataDownloadBlob_path_from_queueTrigger = `{containerName}/{blobName}/{timeKey}${this.shouldGzip ? '_gzip' : ''}`;
         this.http_dataDownload_route = this.clientConfig.downloadBlob_route + '/{containerName}/{blobName}/{timeKeyWithGzip}';
         this.dataDownloadBlob_path_from_http_dataDownload_route = `{containerName}/{blobName}/{timeKeyWithGzip}`;
         this.updateRequestQueue_queueName = 'lookup-lsc-update-request-queue';
@@ -132,6 +132,9 @@ class ServerConfig {
         this.changeTable_tableName_fromQueueTrigger = `blobaccess`;
         this.changeTable_partitionKey_fromQueueTrigger = `{containerName}_{blobName}`;
         this.changeTable_rowKey_fromQueueTrigger = `change`;
+    }
+    getDataDownloadBlobName_from_queueMessage(message) {
+        return `${message.blobName}/{message.timeKey}${this.shouldGzip ? '_gzip' : ''}`;
     }
     getKeyFromRequest(req, bindingData) {
         const d = bindingData;
