@@ -1,0 +1,24 @@
+{
+ "bindings": [
+  {
+   "name": "req",
+   "type": "httpTrigger",
+   "direction": "in",
+   "authLevel": "anonymous",
+   "route": "api/lookup-lsc-download/{container}/{blob}/{timeKey}"
+  },
+  {
+   "name": "res",
+   "type": "http",
+   "direction": "out"
+  },
+  {
+   "name": "inInputBlob",
+   "type": "blob",
+   "direction": "in",
+   "path": "{containerName}/{blobName}/{timeKey}.gzip",
+   "connection": "AZURE_STORAGE_CONNECTION_STRING"
+  }
+ ],
+ "disabled": false
+}

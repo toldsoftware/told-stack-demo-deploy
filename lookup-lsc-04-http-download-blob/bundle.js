@@ -60,40 +60,61 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 266);
+/******/ 	return __webpack_require__(__webpack_require__.s = 299);
 /******/ })
 /************************************************************************/
 /******/ ({
 
-/***/ 115:
+/***/ 249:
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const server_config_1 = __webpack_require__(250);
+const config_lookup_lsc_1 = __webpack_require__(251);
+exports.config = new server_config_1.ServerConfig(config_lookup_lsc_1.clientConfig, () => __awaiter(this, void 0, void 0, function* () { return { data: 'TEST ' + new Date() }; }));
+
+
+/***/ }),
+
+/***/ 250:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-;
-class Config {
-    constructor(obtainBlobData, apiRoutePath = 'api/lookup-lsc', default_storageConnectionString_AppSettingName = 'AZURE_STORAGE_CONNECTION_STRING') {
+class ServerConfig {
+    constructor(clientConfig, obtainBlobData, default_storageConnectionString_AppSettingName = 'AZURE_STORAGE_CONNECTION_STRING') {
+        this.clientConfig = clientConfig;
         this.obtainBlobData = obtainBlobData;
-        this.apiRoutePath = apiRoutePath;
         this.default_storageConnectionString_AppSettingName = default_storageConnectionString_AppSettingName;
         this.timeToLiveSeconds = 60;
         this.timeExtendSeconds = 1;
         this.timeExecutionSeconds = 10;
-        this.timePollSeconds = 1;
-        this.maxPollCount = 5;
-        this.domain = '/';
-        this.blobProxyRoutePath = 'blob';
+        this.timePollSeconds = this.clientConfig.timePollSeconds;
         this.updateRequestQueue_connection = this.default_storageConnectionString_AppSettingName;
         this.updateExecuteQueue_connection = this.default_storageConnectionString_AppSettingName;
         this.lookupTable_connection = this.default_storageConnectionString_AppSettingName;
         this.changeTable_connection = this.default_storageConnectionString_AppSettingName;
         this.dataRawBlob_connection = this.default_storageConnectionString_AppSettingName;
         this.dataDownloadBlob_connection = this.default_storageConnectionString_AppSettingName;
-        // Function Template
         // Slash in blobName is not supported (i.e. {*blob}) because table partitionKey/rowKey cannot / in the name
         // http_route = this.apiRoutePath + '/{container}/{*blob}';
-        this.http_route = this.apiRoutePath + '/{container}/{blob}';
+        this.http_route = this.clientConfig.lookup_route + '/{container}/{blob}';
+        this.getDataDownloadBlobName = this.clientConfig.getDataDownloadBlobName;
+        this.dataRawBlob_path_fromQueueTrigger = `{containerName}/{blobName}`;
+        this.dataDownloadBlob_path_from_queueTriggerDate = `{containerName}/{blobName}/{timeKey}.gzip`;
+        this.dataDownloadBlob_path_from_http_dataDownload_route = `{containerName}/{blobName}/{timeKey}.gzip`;
+        this.http_dataDownload_route = this.clientConfig.downloadBlob_route + '/{container}/{blob}/{timeKey}';
         this.updateRequestQueue_queueName = 'lookup-lsc-update-request-queue';
         this.updateExecuteQueue_queueName = 'lookup-lsc-update-execute-queue';
         // These will encode to a url that receives parametes
@@ -110,8 +131,6 @@ class Config {
         this.changeTable_tableName_fromQueueTrigger = `blobaccess`;
         this.changeTable_partitionKey_fromQueueTrigger = `{containerName}_{blobName}`;
         this.changeTable_rowKey_fromQueueTrigger = `change`;
-        this.dataRawBlob_path_fromQueueTrigger = `{containerName}/{blobName}`;
-        this.dataDownloadBlob_path_fromQueueTriggerDate = `{containerName}/{blobName}/{timeKey}.gzip`;
     }
     getKeyFromRequest(req, bindingData) {
         const d = bindingData;
@@ -146,64 +165,58 @@ class Config {
                 .replace(/\{blobName\}/g, queueTrigger.blobName),
         };
     }
+}
+exports.ServerConfig = ServerConfig;
+
+
+/***/ }),
+
+/***/ 251:
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+const client_config_1 = __webpack_require__(252);
+exports.clientConfig = new client_config_1.ClientConfig({
+    lookup_domain: 'https://told-stack-demo.azurewebsites.net',
+    lookup_route: 'api/lookup-lsc',
+    downloadBlob_domain: 'https://told-stack-demo.azurewebsites.net',
+    downloadBlob_route: 'api/lookup-lsc-download'
+});
+
+
+/***/ }),
+
+/***/ 252:
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+;
+class ClientConfig {
+    constructor(options) {
+        this.timePollSeconds = 1;
+        this.maxPollCount = 5;
+        this.lookup_domain = '/';
+        this.lookup_route = 'api/lookup-lsc';
+        this.downloadBlob_domain = '/';
+        this.downloadBlob_route = 'blob';
+        Object.assign(this, options);
+    }
     getLookupUrl(key) {
-        return `${this.domain}/${this.apiRoutePath}/${key.containerName}/${key.blobName}`;
+        return `${this.lookup_domain}/${this.lookup_route}/${key.containerName}/${key.blobName}`;
     }
     getDataDownloadUrl(key, lookup) {
-        return `${this.domain}/${this.blobProxyRoutePath}/${key.containerName}/${this.getDataDownloadBlobName(key.blobName, lookup)}`;
-    }
-    getLookupBlobName(blobName) {
-        return `${blobName}/_lookup.txt`;
+        return `${this.downloadBlob_domain}/${this.downloadBlob_route ? this.downloadBlob_route + '/' : ''}${key.containerName}/${this.getDataDownloadBlobName(key.blobName, lookup)}`;
     }
     getDataDownloadBlobName(blobName, lookup) {
         // TODO: Test if works with .ext and switch to underscore if needed
         return `${blobName}/${lookup.timeKey}.gzip`;
     }
 }
-exports.Config = Config;
-
-
-/***/ }),
-
-/***/ 253:
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-const config_1 = __webpack_require__(115);
-const obtain_test_blob_data_1 = __webpack_require__(254);
-exports.config = new config_1.Config(obtain_test_blob_data_1.obtainTestBlobData, 'api/test-blob');
-
-
-/***/ }),
-
-/***/ 254:
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-function obtainTestBlobData(oldBlob, key) {
-    return __awaiter(this, void 0, void 0, function* () {
-        return {
-            data: {
-                key,
-                time: new Date(),
-                oldBlob
-            }
-        };
-    });
-}
-exports.obtainTestBlobData = obtainTestBlobData;
+exports.ClientConfig = ClientConfig;
 
 
 /***/ }),
@@ -213,17 +226,9 @@ exports.obtainTestBlobData = obtainTestBlobData;
 
 "use strict";
 
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 // Http Request: Handle Update Request
-// Table In: Read Old Lookup Blob Value
+// Blob In: Read Old Lookup Blob Value
 // Queue Out: Update Request Queue
 // Http Response: Return Old Lookup Value with Short TTL
 function createFunctionJson(config) {
@@ -242,20 +247,11 @@ function createFunctionJson(config) {
                 direction: "out"
             },
             {
-                name: "inLookupTable",
-                type: "table",
+                name: "inInputBlob",
+                type: "blob",
                 direction: "in",
-                tableName: config.lookupTable_tableName,
-                partitionKey: config.lookupTable_partitionKey,
-                rowKey: config.lookupTable_rowKey,
-                connection: config.lookupTable_connection
-            },
-            {
-                name: "outUpdateRequestQueue",
-                type: "queue",
-                direction: "out",
-                queueName: config.updateRequestQueue_queueName,
-                connection: config.updateRequestQueue_connection
+                path: config.inputBlob_path,
+                connection: config.inputBlob_connection
             },
         ],
         disabled: false
@@ -263,66 +259,16 @@ function createFunctionJson(config) {
 }
 exports.createFunctionJson = createFunctionJson;
 function runFunction(config, context, req) {
-    return __awaiter(this, void 0, void 0, function* () {
-        context.log('START');
-        const dataKey = config.getKeyFromRequest(req, context.bindingData);
-        const lookup = context.bindings.inLookupTable;
-        context.log('Lookup', { lookup });
-        // If the blob value is not stale
-        // Return Current Blob Value with Long TTL
-        const remainingTtl = lookup && lookup.timeKey
-            && Math.ceil((parseInt(lookup.timeKey) + config.timeToLiveSeconds * 1000 - Date.now()) / 1000);
-        context.log('remainingTtl', { remainingTtl, timeKey: lookup, timeToLiveSeconds: config.timeToLiveSeconds, now: Date.now() });
-        if (remainingTtl > config.timeExtendSeconds) {
-            context.log('Return Old Lookup', { lookup, remainingTtl });
-            // Return Old Lookup (Long TTL)
-            context.res = {
-                body: lookup,
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Cache-Control': `public, max-age=${remainingTtl}`
-                }
-            };
-            context.log('DONE');
-            context.done();
-            return;
+    const data = context.bindings.inInputBlob;
+    context.res = {
+        body: data,
+        headers: {
+            'Content-Type': config.responseOptions.contentType || 'application/json',
+            'Content-Encoding': config.responseOptions.contentEncoding || undefined,
+            'Cache-Control': config.responseOptions.cacheControl || undefined,
         }
-        context.log('Request Update');
-        // Set Update Request Queue
-        context.bindings.outUpdateRequestQueue = Object.assign({}, dataKey, { timeKey: '' + Date.now() });
-        // Return Current Blob Value with Short TTL
-        if (!lookup) {
-            context.log('Missing Lookup (First Time?)');
-            context.res = {
-                body: { error: `Not Ready Yet: Try again in ${config.timePollSeconds} Seconds` },
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Cache-Control': `public, max-age=${config.timeExtendSeconds}`,
-                }
-            };
-            // context.res = {
-            //     status: 400,
-            //     body: `Not Ready Yet: Try again in ${config.timePollSeconds} Seconds`,
-            //     headers: {
-            //         'Cache-Control': `public, max-age=${config.timeExtendSeconds}`
-            //     }
-            // };
-            context.log('DONE');
-            context.done();
-            return;
-        }
-        // Return Old Lookup (Short)
-        context.log('Return Old Lookup with Short TTL while Getting New Lookup and Value');
-        context.res = {
-            body: lookup,
-            headers: {
-                'Content-Type': 'application/json',
-                'Cache-Control': `public, max-age=${config.timeExtendSeconds}`,
-            }
-        };
-        context.log('DONE');
-        context.done();
-    });
+    };
+    context.done();
 }
 exports.runFunction = runFunction;
 ;
@@ -330,19 +276,59 @@ exports.runFunction = runFunction;
 
 /***/ }),
 
-/***/ 266:
+/***/ 299:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-const function_01_http_1 = __webpack_require__(255);
-const config_test_blob_1 = __webpack_require__(253);
+const function_04_http_download_blob_1 = __webpack_require__(300);
+const config_lookup_lsc_1 = __webpack_require__(249);
 const run = function (...args) {
-    function_01_http_1.runFunction.apply(null, [config_test_blob_1.config, ...args]);
+    function_04_http_download_blob_1.runFunction.apply(null, [config_lookup_lsc_1.config, ...args]);
 };
 global.__run = run;
 module.exports = global.__run;
+
+
+/***/ }),
+
+/***/ 300:
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const function_01_http_1 = __webpack_require__(255);
+function createFunctionJson(config) {
+    return function_01_http_1.createFunctionJson({
+        http_route: config.http_dataDownload_route,
+        inputBlob_connection: config.dataDownloadBlob_connection,
+        inputBlob_path: config.dataDownloadBlob_path_from_http_dataDownload_route,
+    });
+}
+exports.createFunctionJson = createFunctionJson;
+function runFunction(config, context, req) {
+    return __awaiter(this, void 0, void 0, function* () {
+        return function_01_http_1.runFunction({
+            responseOptions: {
+                cacheControl: 'public, max-age: ' + (config.timeToLiveSeconds * 4),
+                contentEncoding: 'gzip',
+                contentType: 'application/json',
+            }
+        }, context, req);
+    });
+}
+exports.runFunction = runFunction;
+;
 
 
 /***/ })

@@ -65,7 +65,7 @@
 /************************************************************************/
 /******/ ({
 
-/***/ 251:
+/***/ 249:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -79,14 +79,14 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const server_config_1 = __webpack_require__(252);
-const lookup_lsc_config_1 = __webpack_require__(253);
-exports.config = new server_config_1.ServerConfig(lookup_lsc_config_1.clientConfig, () => __awaiter(this, void 0, void 0, function* () { return { data: 'TEST ' + new Date() }; }));
+const server_config_1 = __webpack_require__(250);
+const config_lookup_lsc_1 = __webpack_require__(251);
+exports.config = new server_config_1.ServerConfig(config_lookup_lsc_1.clientConfig, () => __awaiter(this, void 0, void 0, function* () { return { data: 'TEST ' + new Date() }; }));
 
 
 /***/ }),
 
-/***/ 252:
+/***/ 250:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -109,10 +109,12 @@ class ServerConfig {
         this.dataDownloadBlob_connection = this.default_storageConnectionString_AppSettingName;
         // Slash in blobName is not supported (i.e. {*blob}) because table partitionKey/rowKey cannot / in the name
         // http_route = this.apiRoutePath + '/{container}/{*blob}';
-        this.http_route = this.clientConfig.apiRoutePath + '/{container}/{blob}';
+        this.http_route = this.clientConfig.lookup_route + '/{container}/{blob}';
         this.getDataDownloadBlobName = this.clientConfig.getDataDownloadBlobName;
         this.dataRawBlob_path_fromQueueTrigger = `{containerName}/{blobName}`;
-        this.dataDownloadBlob_path_fromQueueTriggerDate = `{containerName}/{blobName}/{timeKey}.gzip`;
+        this.dataDownloadBlob_path_from_queueTriggerDate = `{containerName}/{blobName}/{timeKey}.gzip`;
+        this.dataDownloadBlob_path_from_http_dataDownload_route = `{containerName}/{blobName}/{timeKey}.gzip`;
+        this.http_dataDownload_route = this.clientConfig.downloadBlob_route + '/{container}/{blob}/{timeKey}';
         this.updateRequestQueue_queueName = 'lookup-lsc-update-request-queue';
         this.updateExecuteQueue_queueName = 'lookup-lsc-update-execute-queue';
         // These will encode to a url that receives parametes
@@ -169,19 +171,24 @@ exports.ServerConfig = ServerConfig;
 
 /***/ }),
 
-/***/ 253:
+/***/ 251:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-const client_config_1 = __webpack_require__(254);
-exports.clientConfig = new client_config_1.ClientConfig();
+const client_config_1 = __webpack_require__(252);
+exports.clientConfig = new client_config_1.ClientConfig({
+    lookup_domain: 'https://told-stack-demo.azurewebsites.net',
+    lookup_route: 'api/lookup-lsc',
+    downloadBlob_domain: 'https://told-stack-demo.azurewebsites.net',
+    downloadBlob_route: 'api/lookup-lsc-download'
+});
 
 
 /***/ }),
 
-/***/ 254:
+/***/ 252:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -189,18 +196,20 @@ exports.clientConfig = new client_config_1.ClientConfig();
 Object.defineProperty(exports, "__esModule", { value: true });
 ;
 class ClientConfig {
-    constructor(domain = '/', apiRoutePath = 'api/lookup-lsc', blobProxyRoutePath = 'blob') {
-        this.domain = domain;
-        this.apiRoutePath = apiRoutePath;
-        this.blobProxyRoutePath = blobProxyRoutePath;
+    constructor(options) {
         this.timePollSeconds = 1;
         this.maxPollCount = 5;
+        this.lookup_domain = '/';
+        this.lookup_route = 'api/lookup-lsc';
+        this.downloadBlob_domain = '/';
+        this.downloadBlob_route = 'blob';
+        Object.assign(this, options);
     }
     getLookupUrl(key) {
-        return `${this.domain}/${this.apiRoutePath}/${key.containerName}/${key.blobName}`;
+        return `${this.lookup_domain}/${this.lookup_route}/${key.containerName}/${key.blobName}`;
     }
     getDataDownloadUrl(key, lookup) {
-        return `${this.domain}/${this.blobProxyRoutePath}/${key.containerName}/${this.getDataDownloadBlobName(key.blobName, lookup)}`;
+        return `${this.downloadBlob_domain}/${this.downloadBlob_route ? this.downloadBlob_route + '/' : ''}${key.containerName}/${this.getDataDownloadBlobName(key.blobName, lookup)}`;
     }
     getDataDownloadBlobName(blobName, lookup) {
         // TODO: Test if works with .ext and switch to underscore if needed
@@ -219,7 +228,7 @@ exports.ClientConfig = ClientConfig;
 
 Object.defineProperty(exports, "__esModule", { value: true });
 const function_01_http_1 = __webpack_require__(293);
-const config_lookup_lsc_1 = __webpack_require__(251);
+const config_lookup_lsc_1 = __webpack_require__(249);
 const run = function (...args) {
     function_01_http_1.runFunction.apply(null, [config_lookup_lsc_1.config, ...args]);
 };

@@ -60,29 +60,12 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 279);
+/******/ 	return __webpack_require__(__webpack_require__.s = 280);
 /******/ })
 /************************************************************************/
 /******/ ({
 
-/***/ 279:
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-const function_01_http_1 = __webpack_require__(280);
-const config_http_input_blob_1 = __webpack_require__(281);
-const run = function (...args) {
-    function_01_http_1.runFunction.apply(null, [config_http_input_blob_1.config, ...args]);
-};
-global.__run = run;
-module.exports = global.__run;
-
-
-/***/ }),
-
-/***/ 280:
+/***/ 255:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -124,13 +107,32 @@ function runFunction(config, context, req) {
     context.res = {
         body: data,
         headers: {
-            'Content-Type': 'application/json'
+            'Content-Type': config.responseOptions.contentType || 'application/json',
+            'Content-Encoding': config.responseOptions.contentEncoding || undefined,
+            'Cache-Control': config.responseOptions.cacheControl || undefined,
         }
     };
     context.done();
 }
 exports.runFunction = runFunction;
 ;
+
+
+/***/ }),
+
+/***/ 280:
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+const function_01_http_1 = __webpack_require__(255);
+const config_http_input_blob_1 = __webpack_require__(281);
+const run = function (...args) {
+    function_01_http_1.runFunction.apply(null, [config_http_input_blob_1.config, ...args]);
+};
+global.__run = run;
+module.exports = global.__run;
 
 
 /***/ }),
@@ -154,15 +156,14 @@ exports.config = new config_1.Config();
 
 Object.defineProperty(exports, "__esModule", { value: true });
 class Config {
-    constructor(http_routeRoot = 'api/http-input-blob', default_storageConnectionString_AppSettingName = 'AZURE_STORAGE_CONNECTION_STRING') {
-        this.http_routeRoot = http_routeRoot;
-        this.default_storageConnectionString_AppSettingName = default_storageConnectionString_AppSettingName;
+    constructor(options = {}) {
+        this.http_routeRoot = 'api/http-input-blob';
+        this.default_storageConnectionString_AppSettingName = 'AZURE_STORAGE_CONNECTION_STRING';
+        this.responseOptions = {};
         this.http_route = this.http_routeRoot + '/{container}/{*blob}';
         this.inputBlob_path = '{container}/{blob}';
         this.inputBlob_connection = this.default_storageConnectionString_AppSettingName;
-    }
-    getDataFromRequest(req, bindingData) {
-        return { key: { container: bindingData.container, blob: bindingData.blob }, value: req.body };
+        Object.assign(this, options);
     }
 }
 exports.Config = Config;
