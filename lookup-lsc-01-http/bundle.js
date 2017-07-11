@@ -60,12 +60,81 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 292);
+/******/ 	return __webpack_require__(__webpack_require__.s = 293);
 /******/ })
 /************************************************************************/
 /******/ ({
 
-/***/ 249:
+/***/ 114:
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+// export function objectToValueIterator<T>(obj: { [key: string]: T }): { [key: string]: T } & Iterable<T> {
+Object.defineProperty(exports, "__esModule", { value: true });
+//     const o = obj as any;
+//     o[Symbol.iterator] = () => {
+//         let keys = Object.getOwnPropertyNames(obj);
+//         let i = 0;
+//         return {
+//             next: () => {
+//                 const key = keys[i++];
+//                 const value = obj[key];
+//                 return {
+//                     value,
+//                     done: i >= keys.length
+//                 };
+//             }
+//         };
+//     };
+//     return o;
+// }
+// export function objectToKeyValueIterator<T>(obj: { [key: string]: T }): { [key: string]: T } & Iterable<{ key: string, value: T }> {
+//     const o = obj as any;
+//     o[Symbol.iterator] = () => {
+//         let keys = Object.getOwnPropertyNames(obj);
+//         let i = 0;
+//         return {
+//             next: () => {
+//                 const key = keys[i++];
+//                 const value = obj[key];
+//                 return {
+//                     value: { key, value },
+//                     done: i >= keys.length
+//                 };
+//             }
+//         };
+//     };
+//     return o;
+// }
+function group(items, getKey) {
+    const g = items.reduce((o, x) => {
+        const k = getKey(x);
+        const group = o[k] = o[k] || { items: [] };
+        group.items.push(x);
+        return o;
+    }, {});
+    //return objectToValueIterator(g);
+    return g;
+}
+exports.group = group;
+function groupToArray(items, getKey) {
+    const g = group(items, getKey);
+    return Object.getOwnPropertyNames(g).map(k => g[k].items);
+}
+exports.groupToArray = groupToArray;
+function assignPartial(t, p) {
+    for (let k in p) {
+        t[k] = p[k];
+    }
+    return t;
+}
+exports.assignPartial = assignPartial;
+
+
+/***/ }),
+
+/***/ 250:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -79,9 +148,9 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const server_config_1 = __webpack_require__(250);
-const config_lookup_lsc_1 = __webpack_require__(251);
-exports.config = new server_config_1.ServerConfig(config_lookup_lsc_1.clientConfig, () => __awaiter(this, void 0, void 0, function* () { return { data: 'TEST ' + new Date() }; }));
+const server_config_1 = __webpack_require__(251);
+const client_1 = __webpack_require__(252);
+exports.config = new server_config_1.ServerConfig(client_1.clientConfig, () => __awaiter(this, void 0, void 0, function* () { return { data: 'TEST ' + new Date() }; }));
 // // Test Fast Change
 // config.timeToLiveSeconds = 1;
 // config.timeExtendSeconds = 1;
@@ -90,7 +159,7 @@ exports.config = new server_config_1.ServerConfig(config_lookup_lsc_1.clientConf
 
 /***/ }),
 
-/***/ 250:
+/***/ 251:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -180,13 +249,13 @@ exports.ServerConfig = ServerConfig;
 
 /***/ }),
 
-/***/ 251:
+/***/ 252:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-const client_config_1 = __webpack_require__(252);
+const client_config_1 = __webpack_require__(253);
 exports.clientConfig = new client_config_1.ClientConfig({
     // lookup_domain: 'https://told-stack-demo.azurewebsites.net',
     // downloadBlob_domain: 'https://told-stack-demo.azurewebsites.net',
@@ -199,13 +268,13 @@ exports.clientConfig = new client_config_1.ClientConfig({
 
 /***/ }),
 
-/***/ 252:
+/***/ 253:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-const objects_1 = __webpack_require__(301);
+const objects_1 = __webpack_require__(114);
 class ClientConfig {
     constructor(options) {
         this.timePollSeconds = 1;
@@ -237,16 +306,16 @@ exports.ClientConfig = ClientConfig;
 
 /***/ }),
 
-/***/ 292:
+/***/ 293:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-const function_01_http_1 = __webpack_require__(293);
-const config_lookup_lsc_1 = __webpack_require__(249);
+const function_01_http_1 = __webpack_require__(294);
+const server_1 = __webpack_require__(250);
 const run = function (...args) {
-    function_01_http_1.runFunction.apply(null, [config_lookup_lsc_1.config, ...args]);
+    function_01_http_1.runFunction.apply(null, [server_1.config, ...args]);
 };
 global.__run = run;
 module.exports = global.__run;
@@ -254,7 +323,7 @@ module.exports = global.__run;
 
 /***/ }),
 
-/***/ 293:
+/***/ 294:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -381,75 +450,6 @@ function runFunction(config, context, req) {
 }
 exports.runFunction = runFunction;
 ;
-
-
-/***/ }),
-
-/***/ 301:
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-// export function objectToValueIterator<T>(obj: { [key: string]: T }): { [key: string]: T } & Iterable<T> {
-Object.defineProperty(exports, "__esModule", { value: true });
-//     const o = obj as any;
-//     o[Symbol.iterator] = () => {
-//         let keys = Object.getOwnPropertyNames(obj);
-//         let i = 0;
-//         return {
-//             next: () => {
-//                 const key = keys[i++];
-//                 const value = obj[key];
-//                 return {
-//                     value,
-//                     done: i >= keys.length
-//                 };
-//             }
-//         };
-//     };
-//     return o;
-// }
-// export function objectToKeyValueIterator<T>(obj: { [key: string]: T }): { [key: string]: T } & Iterable<{ key: string, value: T }> {
-//     const o = obj as any;
-//     o[Symbol.iterator] = () => {
-//         let keys = Object.getOwnPropertyNames(obj);
-//         let i = 0;
-//         return {
-//             next: () => {
-//                 const key = keys[i++];
-//                 const value = obj[key];
-//                 return {
-//                     value: { key, value },
-//                     done: i >= keys.length
-//                 };
-//             }
-//         };
-//     };
-//     return o;
-// }
-function group(items, getKey) {
-    const g = items.reduce((o, x) => {
-        const k = getKey(x);
-        const group = o[k] = o[k] || { items: [] };
-        group.items.push(x);
-        return o;
-    }, {});
-    //return objectToValueIterator(g);
-    return g;
-}
-exports.group = group;
-function groupToArray(items, getKey) {
-    const g = group(items, getKey);
-    return Object.getOwnPropertyNames(g).map(k => g[k].items);
-}
-exports.groupToArray = groupToArray;
-function assignPartial(t, p) {
-    for (let k in p) {
-        t[k] = p[k];
-    }
-    return t;
-}
-exports.assignPartial = assignPartial;
 
 
 /***/ })

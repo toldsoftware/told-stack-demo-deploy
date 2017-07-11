@@ -60,120 +60,12 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 280);
+/******/ 	return __webpack_require__(__webpack_require__.s = 281);
 /******/ })
 /************************************************************************/
 /******/ ({
 
-/***/ 280:
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-const function_01_http_1 = __webpack_require__(281);
-const config_http_input_blob_1 = __webpack_require__(282);
-const run = function (...args) {
-    function_01_http_1.runFunction.apply(null, [config_http_input_blob_1.config, ...args]);
-};
-global.__run = run;
-module.exports = global.__run;
-
-
-/***/ }),
-
-/***/ 281:
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-// Http Request: Handle Update Request
-// Blob In: Read Old Lookup Blob Value
-// Queue Out: Update Request Queue
-// Http Response: Return Old Lookup Value with Short TTL
-function createFunctionJson(config) {
-    return {
-        bindings: [
-            {
-                name: "req",
-                type: "httpTrigger",
-                direction: "in",
-                authLevel: "anonymous",
-                route: config.http_route
-            },
-            {
-                name: "res",
-                type: "http",
-                direction: "out"
-            },
-            {
-                name: "inInputBlob",
-                type: "blob",
-                direction: "in",
-                path: config.inputBlob_path,
-                connection: config.inputBlob_connection
-            },
-        ],
-        disabled: false
-    };
-}
-exports.createFunctionJson = createFunctionJson;
-function runFunction(config, context, req) {
-    const data = context.bindings.inInputBlob;
-    context.log('http-input-blob', data);
-    context.res = {
-        body: data,
-        headers: {
-            'Content-Type': config.responseOptions.contentType || 'application/json',
-            'Content-Encoding': config.responseOptions.contentEncoding || undefined,
-            'Cache-Control': config.responseOptions.cacheControl || undefined,
-        }
-    };
-    context.done();
-}
-exports.runFunction = runFunction;
-;
-
-
-/***/ }),
-
-/***/ 282:
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-const config_1 = __webpack_require__(283);
-exports.config = new config_1.Config();
-
-
-/***/ }),
-
-/***/ 283:
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-const objects_1 = __webpack_require__(301);
-class Config {
-    constructor(options = {}) {
-        this.http_routeRoot = 'api/http-input-blob';
-        this.default_storageConnectionString_AppSettingName = 'AZURE_STORAGE_CONNECTION_STRING';
-        this.responseOptions = {};
-        this.http_route = this.http_routeRoot + '/{container}/{*blob}';
-        this.inputBlob_path = '{container}/{blob}';
-        this.inputBlob_connection = this.default_storageConnectionString_AppSettingName;
-        objects_1.assignPartial(this, options);
-    }
-}
-exports.Config = Config;
-
-
-/***/ }),
-
-/***/ 301:
+/***/ 114:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -238,6 +130,114 @@ function assignPartial(t, p) {
     return t;
 }
 exports.assignPartial = assignPartial;
+
+
+/***/ }),
+
+/***/ 281:
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+const function_01_http_1 = __webpack_require__(282);
+const http_input_blob_1 = __webpack_require__(283);
+const run = function (...args) {
+    function_01_http_1.runFunction.apply(null, [http_input_blob_1.config, ...args]);
+};
+global.__run = run;
+module.exports = global.__run;
+
+
+/***/ }),
+
+/***/ 282:
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+// Http Request: Handle Update Request
+// Blob In: Read Old Lookup Blob Value
+// Queue Out: Update Request Queue
+// Http Response: Return Old Lookup Value with Short TTL
+function createFunctionJson(config) {
+    return {
+        bindings: [
+            {
+                name: "req",
+                type: "httpTrigger",
+                direction: "in",
+                authLevel: "anonymous",
+                route: config.http_route
+            },
+            {
+                name: "res",
+                type: "http",
+                direction: "out"
+            },
+            {
+                name: "inInputBlob",
+                type: "blob",
+                direction: "in",
+                path: config.inputBlob_path,
+                connection: config.inputBlob_connection
+            },
+        ],
+        disabled: false
+    };
+}
+exports.createFunctionJson = createFunctionJson;
+function runFunction(config, context, req) {
+    const data = context.bindings.inInputBlob;
+    context.log('http-input-blob', data);
+    context.res = {
+        body: data,
+        headers: {
+            'Content-Type': config.responseOptions.contentType || 'application/json',
+            'Content-Encoding': config.responseOptions.contentEncoding || undefined,
+            'Cache-Control': config.responseOptions.cacheControl || undefined,
+        }
+    };
+    context.done();
+}
+exports.runFunction = runFunction;
+;
+
+
+/***/ }),
+
+/***/ 283:
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+const config_1 = __webpack_require__(284);
+exports.config = new config_1.Config();
+
+
+/***/ }),
+
+/***/ 284:
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+const objects_1 = __webpack_require__(114);
+class Config {
+    constructor(options = {}) {
+        this.http_routeRoot = 'api/http-input-blob';
+        this.default_storageConnectionString_AppSettingName = 'AZURE_STORAGE_CONNECTION_STRING';
+        this.responseOptions = {};
+        this.http_route = this.http_routeRoot + '/{container}/{*blob}';
+        this.inputBlob_path = '{container}/{blob}';
+        this.inputBlob_connection = this.default_storageConnectionString_AppSettingName;
+        objects_1.assignPartial(this, options);
+    }
+}
+exports.Config = Config;
 
 
 /***/ })
