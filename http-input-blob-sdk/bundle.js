@@ -78724,6 +78724,7 @@ exports.config = new config_1.Config();
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
+const objects_1 = __webpack_require__(301);
 class Config {
     constructor(options = {}) {
         this.http_routeRoot = 'api/http-input-blob-sdk';
@@ -78732,10 +78733,91 @@ class Config {
         this.http_route = this.http_routeRoot + '/{container}/{*blob}';
         this.inputBlob_path = '{container}/{blob}';
         this.inputBlob_connection = this.default_storageConnectionString_AppSettingName;
-        Object.assign(this, options);
+        objects_1.assignPartial(this, options);
     }
 }
 exports.Config = Config;
+
+
+/***/ }),
+/* 288 */,
+/* 289 */,
+/* 290 */,
+/* 291 */,
+/* 292 */,
+/* 293 */,
+/* 294 */,
+/* 295 */,
+/* 296 */,
+/* 297 */,
+/* 298 */,
+/* 299 */,
+/* 300 */,
+/* 301 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+// export function objectToValueIterator<T>(obj: { [key: string]: T }): { [key: string]: T } & Iterable<T> {
+Object.defineProperty(exports, "__esModule", { value: true });
+//     const o = obj as any;
+//     o[Symbol.iterator] = () => {
+//         let keys = Object.getOwnPropertyNames(obj);
+//         let i = 0;
+//         return {
+//             next: () => {
+//                 const key = keys[i++];
+//                 const value = obj[key];
+//                 return {
+//                     value,
+//                     done: i >= keys.length
+//                 };
+//             }
+//         };
+//     };
+//     return o;
+// }
+// export function objectToKeyValueIterator<T>(obj: { [key: string]: T }): { [key: string]: T } & Iterable<{ key: string, value: T }> {
+//     const o = obj as any;
+//     o[Symbol.iterator] = () => {
+//         let keys = Object.getOwnPropertyNames(obj);
+//         let i = 0;
+//         return {
+//             next: () => {
+//                 const key = keys[i++];
+//                 const value = obj[key];
+//                 return {
+//                     value: { key, value },
+//                     done: i >= keys.length
+//                 };
+//             }
+//         };
+//     };
+//     return o;
+// }
+function group(items, getKey) {
+    const g = items.reduce((o, x) => {
+        const k = getKey(x);
+        const group = o[k] = o[k] || { items: [] };
+        group.items.push(x);
+        return o;
+    }, {});
+    //return objectToValueIterator(g);
+    return g;
+}
+exports.group = group;
+function groupToArray(items, getKey) {
+    const g = group(items, getKey);
+    return Object.getOwnPropertyNames(g).map(k => g[k].items);
+}
+exports.groupToArray = groupToArray;
+function assignPartial(t, p) {
+    for (let k in p) {
+        t[k] = p[k];
+    }
+    return t;
+}
+exports.assignPartial = assignPartial;
 
 
 /***/ })

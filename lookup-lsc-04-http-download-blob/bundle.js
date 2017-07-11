@@ -78657,6 +78657,7 @@ exports.clientConfig = new client_config_1.ClientConfig({
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
+const objects_1 = __webpack_require__(301);
 class ClientConfig {
     constructor(options) {
         this.timePollSeconds = 1;
@@ -78670,7 +78671,7 @@ class ClientConfig {
         // In addition, since using a function instead of proxy, gzip is done automatically by the function
         // So it is not needed, and would only be useful to reduce storage size at the cost of increased processing
         this.shouldGzipDownloadBlob = false;
-        Object.assign(this, options);
+        objects_1.assignPartial(this, options);
     }
     getLookupUrl(key) {
         return `${this.lookup_domain}/${this.lookup_route}/${key.containerName}/${key.blobName}`;
@@ -78877,6 +78878,74 @@ function runFunction(config, context, req) {
 }
 exports.runFunction = runFunction;
 ;
+
+
+/***/ }),
+/* 301 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+// export function objectToValueIterator<T>(obj: { [key: string]: T }): { [key: string]: T } & Iterable<T> {
+Object.defineProperty(exports, "__esModule", { value: true });
+//     const o = obj as any;
+//     o[Symbol.iterator] = () => {
+//         let keys = Object.getOwnPropertyNames(obj);
+//         let i = 0;
+//         return {
+//             next: () => {
+//                 const key = keys[i++];
+//                 const value = obj[key];
+//                 return {
+//                     value,
+//                     done: i >= keys.length
+//                 };
+//             }
+//         };
+//     };
+//     return o;
+// }
+// export function objectToKeyValueIterator<T>(obj: { [key: string]: T }): { [key: string]: T } & Iterable<{ key: string, value: T }> {
+//     const o = obj as any;
+//     o[Symbol.iterator] = () => {
+//         let keys = Object.getOwnPropertyNames(obj);
+//         let i = 0;
+//         return {
+//             next: () => {
+//                 const key = keys[i++];
+//                 const value = obj[key];
+//                 return {
+//                     value: { key, value },
+//                     done: i >= keys.length
+//                 };
+//             }
+//         };
+//     };
+//     return o;
+// }
+function group(items, getKey) {
+    const g = items.reduce((o, x) => {
+        const k = getKey(x);
+        const group = o[k] = o[k] || { items: [] };
+        group.items.push(x);
+        return o;
+    }, {});
+    //return objectToValueIterator(g);
+    return g;
+}
+exports.group = group;
+function groupToArray(items, getKey) {
+    const g = group(items, getKey);
+    return Object.getOwnPropertyNames(g).map(k => g[k].items);
+}
+exports.groupToArray = groupToArray;
+function assignPartial(t, p) {
+    for (let k in p) {
+        t[k] = p[k];
+    }
+    return t;
+}
+exports.assignPartial = assignPartial;
 
 
 /***/ })
