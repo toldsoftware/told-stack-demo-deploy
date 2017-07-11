@@ -78555,10 +78555,10 @@ class ServerConfig {
         this.clientConfig = clientConfig;
         this.obtainBlobData = obtainBlobData;
         this.default_storageConnectionString_AppSettingName = default_storageConnectionString_AppSettingName;
-        this.timeToLiveSeconds = 60;
+        this.timeToLiveSeconds = this.clientConfig.timeToLiveSeconds;
+        this.timePollSeconds = this.clientConfig.timePollSeconds;
         this.timeExtendSeconds = 1;
         this.timeExecutionSeconds = 10;
-        this.timePollSeconds = this.clientConfig.timePollSeconds;
         this.shouldGzip = this.clientConfig.shouldGzipDownloadBlob;
         this.updateRequestQueue_connection = this.default_storageConnectionString_AppSettingName;
         this.updateExecuteQueue_connection = this.default_storageConnectionString_AppSettingName;
@@ -78657,11 +78657,11 @@ exports.clientConfig = new client_config_1.ClientConfig({
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-;
 class ClientConfig {
     constructor(options) {
         this.timePollSeconds = 1;
         this.maxPollCount = 5;
+        this.timeToLiveSeconds = 60;
         this.lookup_domain = '/';
         this.lookup_route = 'api/lookup-lsc';
         this.downloadBlob_domain = '/';

@@ -101,10 +101,10 @@ class ServerConfig {
         this.clientConfig = clientConfig;
         this.obtainBlobData = obtainBlobData;
         this.default_storageConnectionString_AppSettingName = default_storageConnectionString_AppSettingName;
-        this.timeToLiveSeconds = 60;
+        this.timeToLiveSeconds = this.clientConfig.timeToLiveSeconds;
+        this.timePollSeconds = this.clientConfig.timePollSeconds;
         this.timeExtendSeconds = 1;
         this.timeExecutionSeconds = 10;
-        this.timePollSeconds = this.clientConfig.timePollSeconds;
         this.shouldGzip = this.clientConfig.shouldGzipDownloadBlob;
         this.updateRequestQueue_connection = this.default_storageConnectionString_AppSettingName;
         this.updateExecuteQueue_connection = this.default_storageConnectionString_AppSettingName;
@@ -205,11 +205,11 @@ exports.clientConfig = new client_config_1.ClientConfig({
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-;
 class ClientConfig {
     constructor(options) {
         this.timePollSeconds = 1;
         this.maxPollCount = 5;
+        this.timeToLiveSeconds = 60;
         this.lookup_domain = '/';
         this.lookup_route = 'api/lookup-lsc';
         this.downloadBlob_domain = '/';
@@ -322,7 +322,10 @@ function runFunction(config, context, req) {
             context.log('Return Old Lookup', { lookup, remainingTtl });
             // Return Old Lookup (Long TTL)
             context.res = {
-                body: lookup,
+                body: {
+                    timeKey: lookup.timeKey,
+                    timeToExpireSeconds: remainingTtl
+                },
                 headers: {
                     'Content-Type': 'application/json',
                     'Cache-Control': `public, max-age=${remainingTtl}`
@@ -339,7 +342,10 @@ function runFunction(config, context, req) {
         if (!lookup) {
             context.log('Missing Lookup (First Time?)');
             context.res = {
-                body: { error: `Not Ready Yet: Try again in ${config.timePollSeconds} Seconds` },
+                body: {
+                    error: `Not Ready Yet: Try again in ${config.timePollSeconds} Seconds`,
+                    timeToExpireSeconds: config.timePollSeconds,
+                },
                 headers: {
                     'Content-Type': 'application/json',
                     'Cache-Control': `public, max-age=${config.timeExtendSeconds}`,
@@ -359,7 +365,10 @@ function runFunction(config, context, req) {
         // Return Old Lookup (Short)
         context.log('Return Old Lookup with Short TTL while Getting New Lookup and Value');
         context.res = {
-            body: lookup,
+            body: {
+                timeKey: lookup.timeKey,
+                timeToExpireSeconds: config.timeExtendSeconds,
+            },
             headers: {
                 'Content-Type': 'application/json',
                 'Cache-Control': `public, max-age=${config.timeExtendSeconds}`,
