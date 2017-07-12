@@ -5,7 +5,7 @@
             "matchCondition": {
                 "route": "static/{*file}"
             },
-            "backendUri": "https://base-connect.azurewebsites.net/api/static?file={file}"
+            "backendUri": "https://told-stack-demo.azurewebsites.net/api/static?file={file}"
         },
         "Root": {
             "matchCondition": {
@@ -14,7 +14,7 @@
                     "GET"
                 ]
             },
-            "backendUri": "https://base-connect.azurewebsites.net/api/static?file=demo/"
+            "backendUri": "https://told-stack-demo.azurewebsites.net/api/static?file=demo/"
         }
     }
 }
