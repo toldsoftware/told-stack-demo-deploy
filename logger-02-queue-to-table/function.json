@@ -13,6 +13,42 @@
    "direction": "out",
    "tableName": "log",
    "connection": "AZURE_STORAGE_CONNECTION_STRING"
+  },
+  {
+   "name": "inSessionLookupTable",
+   "type": "table",
+   "direction": "in",
+   "tableName": "session-user-lookup",
+   "partitionKey": "lookup",
+   "rowKey": "{sessionId}",
+   "connection": "AZURE_STORAGE_CONNECTION_STRING"
+  },
+  {
+   "name": "outSessionLookupTable",
+   "type": "table",
+   "direction": "out",
+   "tableName": "session-user-lookup",
+   "partitionKey": "lookup",
+   "rowKey": "{sessionId}",
+   "connection": "AZURE_STORAGE_CONNECTION_STRING"
+  },
+  {
+   "name": "inUserLookupTable",
+   "type": "table",
+   "direction": "in",
+   "tableName": "session-user-lookup",
+   "partitionKey": "lookup",
+   "rowKey": "{userId}",
+   "connection": "AZURE_STORAGE_CONNECTION_STRING"
+  },
+  {
+   "name": "outUserLookupTable",
+   "type": "table",
+   "direction": "out",
+   "tableName": "session-user-lookup",
+   "partitionKey": "lookup",
+   "rowKey": "{userId}",
+   "connection": "AZURE_STORAGE_CONNECTION_STRING"
   }
  ],
  "disabled": false
