@@ -211,7 +211,7 @@ exports.createFunctionJson = createFunctionJson;
 function runFunction(config, context) {
     return __awaiter(this, void 0, void 0, function* () {
         context.log('START', { insertionTime: context.bindingData.insertionTime, itemsLength: context.bindings.inLogQueue.items.length });
-        context.bindings.outLogTable = context.bindings.inLogQueue.items.map(x => (Object.assign({ PartitionKey: `${x.userInfo.sessionId}`, RowKey: `${x.userInfo.userId}_${left_pad_1.leftPad(x.runTime, 10)}_${rand_1.randHex(4)}` }, x)));
+        context.bindings.outLogTable = context.bindings.inLogQueue.items.map(x => (Object.assign({ PartitionKey: `${x.userInfo.sessionId}`, RowKey: `${x.userInfo.userId}_t_${left_pad_1.leftPad(x.runTime, 10, '_')}_r_${rand_1.randHex(4)}` }, x)));
         context.log('DONE');
         context.done();
     });
@@ -244,8 +244,12 @@ exports.randHex = randHex;
 
 Object.defineProperty(exports, "__esModule", { value: true });
 // Max Length 64
-function leftPad(v, length) {
-    return ('0000000000000000000000000000000000000000000000000000000000000000' + v).substr(-length);
+function leftPad(v, length, character = '') {
+    let p = '0000000000000000000000000000000000000000000000000000000000000000';
+    if (character) {
+        p = p.replace(/0/g, character);
+    }
+    return (p + v).substr(-length);
 }
 exports.leftPad = leftPad;
 
@@ -312,7 +316,9 @@ function groupToArray(items, getKey) {
 exports.groupToArray = groupToArray;
 function assignPartial(t, p) {
     for (let k in p) {
-        t[k] = p[k];
+        if (p.hasOwnProperty(k)) {
+            t[k] = p[k];
+        }
     }
     return t;
 }
