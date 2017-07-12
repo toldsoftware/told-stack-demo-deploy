@@ -104,10 +104,10 @@ class ServerConfig {
         this.logTable_tableName_fromQueueTrigger = `log`;
         // logTable_partitionKey_fromQueueTrigger = `{}`;
         // logTable_rowKey_fromQueueTrigger = ``;
-        this.sessionLookupTable_tableName_fromQueueTrigger = `session-user-lookup`;
+        this.sessionLookupTable_tableName_fromQueueTrigger = `sessionuserlookup`;
         this.sessionLookupTable_partitionKey_fromQueueTrigger = `lookup`;
         this.sessionLookupTable_rowKey_fromQueueTrigger = `{sessionId}`;
-        this.userLookupTable_tableName_fromQueueTrigger = `session-user-lookup`;
+        this.userLookupTable_tableName_fromQueueTrigger = `sessionuserlookup`;
         this.userLookupTable_partitionKey_fromQueueTrigger = `lookup`;
         this.userLookupTable_rowKey_fromQueueTrigger = `{userId}`;
     }
