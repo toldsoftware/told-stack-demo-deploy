@@ -60,7 +60,7 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 264);
+/******/ 	return __webpack_require__(__webpack_require__.s = 270);
 /******/ })
 /************************************************************************/
 /******/ ({
@@ -72,7 +72,7 @@
 
 Object.defineProperty(exports, "__esModule", { value: true });
 const server_config_1 = __webpack_require__(259);
-const logger_client_1 = __webpack_require__(260);
+const logger_client_1 = __webpack_require__(262);
 exports.config = new server_config_1.ServerConfig(logger_client_1.clientConfig);
 
 
@@ -84,11 +84,9 @@ exports.config = new server_config_1.ServerConfig(logger_client_1.clientConfig);
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-const left_pad_1 = __webpack_require__(267);
-const rand_1 = __webpack_require__(266);
+const left_pad_1 = __webpack_require__(260);
+const rand_1 = __webpack_require__(261);
 class ServerConfig {
-    // logTable_partitionKey_fromQueueTrigger = `{}`;
-    // logTable_rowKey_fromQueueTrigger = ``;
     constructor(clientConfig, default_storageConnectionString_AppSettingName = 'AZURE_STORAGE_CONNECTION_STRING') {
         this.clientConfig = clientConfig;
         this.default_storageConnectionString_AppSettingName = default_storageConnectionString_AppSettingName;
@@ -104,6 +102,14 @@ class ServerConfig {
         //         ;
         // }
         this.logTable_tableName_fromQueueTrigger = `log`;
+        // logTable_partitionKey_fromQueueTrigger = `{}`;
+        // logTable_rowKey_fromQueueTrigger = ``;
+        this.sessionLookupTable_tableName_fromQueueTrigger = `session-user-lookup`;
+        this.sessionLookupTable_partitionKey_fromQueueTrigger = `lookup`;
+        this.sessionLookupTable_rowKey_fromQueueTrigger = `{sessionId}`;
+        this.userLookupTable_tableName_fromQueueTrigger = `session-user-lookup`;
+        this.userLookupTable_partitionKey_fromQueueTrigger = `lookup`;
+        this.userLookupTable_rowKey_fromQueueTrigger = `{userId}`;
     }
     getPartitionKey(item) {
         return `${item.userInfo.sessionId}`;
@@ -123,7 +129,42 @@ exports.ServerConfig = ServerConfig;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-const client_config_1 = __webpack_require__(261);
+// Max Length 64
+function leftPad(v, length, character = '') {
+    let p = '0000000000000000000000000000000000000000000000000000000000000000';
+    if (character) {
+        p = p.replace(/0/g, character);
+    }
+    return (p + v).substr(-length);
+}
+exports.leftPad = leftPad;
+
+
+/***/ }),
+
+/***/ 261:
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+// maxLength = 64
+function randHex(length = 8) {
+    return '0000000000000000000000000000000000000000000000000000000000000000'
+        .substr(0, length).replace(/0/g, () => (0 | Math.random() * 16).toString(16));
+}
+exports.randHex = randHex;
+
+
+/***/ }),
+
+/***/ 262:
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+const client_config_1 = __webpack_require__(263);
 exports.clientConfig = new client_config_1.ClientConfig({
     timeBatchSeconds: 10,
     sendLog_domain: 'https://told-stack-demo.azureedge.net',
@@ -134,7 +175,7 @@ exports.clientConfig = new client_config_1.ClientConfig({
 
 /***/ }),
 
-/***/ 261:
+/***/ 263:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -156,13 +197,13 @@ exports.ClientConfig = ClientConfig;
 
 /***/ }),
 
-/***/ 264:
+/***/ 270:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-const function_02_queue_to_table_1 = __webpack_require__(265);
+const function_02_queue_to_table_1 = __webpack_require__(271);
 const logger_server_1 = __webpack_require__(258);
 const run = function (...args) {
     function_02_queue_to_table_1.runFunction.apply(null, [logger_server_1.config, ...args]);
@@ -173,7 +214,7 @@ module.exports = global.__run;
 
 /***/ }),
 
-/***/ 265:
+/***/ 271:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -209,6 +250,42 @@ function createFunctionJson(config) {
                 // rowKey: config.logTable_rowKey_fromQueueTrigger,
                 connection: config.storageConnection
             },
+            {
+                name: "inSessionLookupTable",
+                type: "table",
+                direction: "in",
+                tableName: config.sessionLookupTable_tableName_fromQueueTrigger,
+                partitionKey: config.sessionLookupTable_partitionKey_fromQueueTrigger,
+                rowKey: config.sessionLookupTable_rowKey_fromQueueTrigger,
+                connection: config.storageConnection
+            },
+            {
+                name: "outSessionLookupTable",
+                type: "table",
+                direction: "out",
+                tableName: config.sessionLookupTable_tableName_fromQueueTrigger,
+                partitionKey: config.sessionLookupTable_partitionKey_fromQueueTrigger,
+                rowKey: config.sessionLookupTable_rowKey_fromQueueTrigger,
+                connection: config.storageConnection
+            },
+            {
+                name: "inUserLookupTable",
+                type: "table",
+                direction: "in",
+                tableName: config.userLookupTable_tableName_fromQueueTrigger,
+                partitionKey: config.userLookupTable_partitionKey_fromQueueTrigger,
+                rowKey: config.userLookupTable_rowKey_fromQueueTrigger,
+                connection: config.storageConnection
+            },
+            {
+                name: "outUserLookupTable",
+                type: "table",
+                direction: "out",
+                tableName: config.userLookupTable_tableName_fromQueueTrigger,
+                partitionKey: config.userLookupTable_partitionKey_fromQueueTrigger,
+                rowKey: config.userLookupTable_rowKey_fromQueueTrigger,
+                connection: config.storageConnection
+            },
         ],
         disabled: false
     };
@@ -223,46 +300,18 @@ function runFunction(config, context) {
         context.bindings.outLogTable = context.bindings.inLogQueue.items.map((x, i) => (Object.assign({ PartitionKey: config.getPartitionKey(x), RowKey: config.getRowKey(x), ip: i === 0 ? ip : undefined }, x, { 
             // userAgent: i === 0 ? userAgent : undefined,
             requestInfo: i === 0 ? requestInfo : undefined })));
+        // Add to Session and User Lookup Tables
+        if (!context.bindings.inSessionLookupTable) {
+            context.bindings.outSessionLookupTable = { userId: context.bindings.inLogQueue.userId };
+        }
+        if (!context.bindings.inUserLookupTable) {
+            context.bindings.outUserLookupTable = { sessionId: context.bindings.inLogQueue.sessionId };
+        }
         context.log('DONE');
         context.done();
     });
 }
 exports.runFunction = runFunction;
-
-
-/***/ }),
-
-/***/ 266:
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-// maxLength = 64
-function randHex(length = 8) {
-    return '0000000000000000000000000000000000000000000000000000000000000000'
-        .substr(0, length).replace(/0/g, () => (0 | Math.random() * 16).toString(16));
-}
-exports.randHex = randHex;
-
-
-/***/ }),
-
-/***/ 267:
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-// Max Length 64
-function leftPad(v, length, character = '') {
-    let p = '0000000000000000000000000000000000000000000000000000000000000000';
-    if (character) {
-        p = p.replace(/0/g, character);
-    }
-    return (p + v).substr(-length);
-}
-exports.leftPad = leftPad;
 
 
 /***/ }),
