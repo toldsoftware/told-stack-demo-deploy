@@ -118,8 +118,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const client_config_1 = __webpack_require__(261);
 exports.clientConfig = new client_config_1.ClientConfig({
     timeBatchSeconds: 10,
-    //sendLog_domain: 'https://told-stack-demo.azureedge.net',
-    sendLog_domain: 'http://localhost:7071',
+    sendLog_domain: 'https://told-stack-demo.azureedge.net',
+    // sendLog_domain: 'http://localhost:7071',
     sendLog_route: 'api/logger/send-log',
 });
 
