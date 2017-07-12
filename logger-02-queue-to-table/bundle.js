@@ -211,7 +211,7 @@ exports.createFunctionJson = createFunctionJson;
 function runFunction(config, context) {
     return __awaiter(this, void 0, void 0, function* () {
         context.log('START', { insertionTime: context.bindingData.insertionTime, itemsLength: context.bindings.inLogQueue.items.length });
-        context.bindings.outLogTable = context.bindings.inLogQueue.items.map(x => (Object.assign({ PartitionKey: `${x.userInfo.sessionId}`, RowKey: `${x.userInfo.userId}_t_${left_pad_1.leftPad(x.runTime, 10, '_')}_r_${rand_1.randHex(4)}` }, x)));
+        context.bindings.outLogTable = context.bindings.inLogQueue.items.map(x => (Object.assign({ PartitionKey: `${x.userInfo.sessionId}`, RowKey: `${x.userInfo.userId}_t-${left_pad_1.leftPad(x.runTime, 10, '-')}_r-${rand_1.randHex(4)}` }, x)));
         context.log('DONE');
         context.done();
     });
