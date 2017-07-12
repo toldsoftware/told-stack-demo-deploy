@@ -19,7 +19,7 @@
    "type": "table",
    "direction": "in",
    "tableName": "sessionuserlookup",
-   "partitionKey": "lookup",
+   "partitionKey": "session-user-lookup",
    "rowKey": "{sessionId}",
    "connection": "AZURE_STORAGE_CONNECTION_STRING"
   },
@@ -28,7 +28,7 @@
    "type": "table",
    "direction": "out",
    "tableName": "sessionuserlookup",
-   "partitionKey": "lookup",
+   "partitionKey": "session-user-lookup",
    "rowKey": "{sessionId}",
    "connection": "AZURE_STORAGE_CONNECTION_STRING"
   },
@@ -37,7 +37,7 @@
    "type": "table",
    "direction": "in",
    "tableName": "sessionuserlookup",
-   "partitionKey": "lookup",
+   "partitionKey": "user-session-lookup",
    "rowKey": "{userId}",
    "connection": "AZURE_STORAGE_CONNECTION_STRING"
   },
@@ -46,7 +46,7 @@
    "type": "table",
    "direction": "out",
    "tableName": "sessionuserlookup",
-   "partitionKey": "lookup",
+   "partitionKey": "user-session-lookup",
    "rowKey": "{userId}",
    "connection": "AZURE_STORAGE_CONNECTION_STRING"
   }

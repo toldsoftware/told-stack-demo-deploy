@@ -105,10 +105,10 @@ class ServerConfig {
         // logTable_partitionKey_fromQueueTrigger = `{}`;
         // logTable_rowKey_fromQueueTrigger = ``;
         this.sessionLookupTable_tableName_fromQueueTrigger = `sessionuserlookup`;
-        this.sessionLookupTable_partitionKey_fromQueueTrigger = `lookup`;
+        this.sessionLookupTable_partitionKey_fromQueueTrigger = `session-user-lookup`;
         this.sessionLookupTable_rowKey_fromQueueTrigger = `{sessionId}`;
         this.userLookupTable_tableName_fromQueueTrigger = `sessionuserlookup`;
-        this.userLookupTable_partitionKey_fromQueueTrigger = `lookup`;
+        this.userLookupTable_partitionKey_fromQueueTrigger = `user-session-lookup`;
         this.userLookupTable_rowKey_fromQueueTrigger = `{userId}`;
     }
     getPartitionKey(item) {
