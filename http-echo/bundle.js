@@ -60,19 +60,19 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 257);
+/******/ 	return __webpack_require__(__webpack_require__.s = 266);
 /******/ })
 /************************************************************************/
 /******/ ({
 
-/***/ 257:
+/***/ 266:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-const function_01_http_1 = __webpack_require__(258);
-const http_echo_1 = __webpack_require__(259);
+const function_01_http_1 = __webpack_require__(267);
+const http_echo_1 = __webpack_require__(268);
 const run = function (...args) {
     function_01_http_1.runFunction.apply(null, [http_echo_1.config, ...args]);
 };
@@ -82,7 +82,7 @@ module.exports = global.__run;
 
 /***/ }),
 
-/***/ 258:
+/***/ 267:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -130,19 +130,19 @@ exports.runFunction = runFunction;
 
 /***/ }),
 
-/***/ 259:
+/***/ 268:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-const config_1 = __webpack_require__(260);
+const config_1 = __webpack_require__(269);
 exports.config = new config_1.Config();
 
 
 /***/ }),
 
-/***/ 260:
+/***/ 269:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";

@@ -60,21 +60,104 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 290);
+/******/ 	return __webpack_require__(__webpack_require__.s = 262);
 /******/ })
 /************************************************************************/
 /******/ ({
 
-/***/ 290:
+/***/ 258:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-const function_01_http_1 = __webpack_require__(291);
-const http_input_blob_1 = __webpack_require__(292);
+const server_config_1 = __webpack_require__(259);
+const logger_client_1 = __webpack_require__(260);
+exports.config = new server_config_1.ServerConfig(logger_client_1.clientConfig);
+
+
+/***/ }),
+
+/***/ 259:
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+class ServerConfig {
+    // logTable_partitionKey_fromQueueTrigger = `{}`;
+    // logTable_rowKey_fromQueueTrigger = ``;
+    constructor(clientConfig, default_storageConnectionString_AppSettingName = 'AZURE_STORAGE_CONNECTION_STRING') {
+        this.clientConfig = clientConfig;
+        this.default_storageConnectionString_AppSettingName = default_storageConnectionString_AppSettingName;
+        this.storageConnection = this.default_storageConnectionString_AppSettingName;
+        this.http_route = this.clientConfig.sendLog_route;
+        this.logQueue_queueName = 'log';
+        // logOversizeQueue_queueName = 'log-oversize';
+        // logOversizeBlob_path = `log-oversize/{DateTime}_{rand-guid}.json`;
+        // getLogOversizeBlobName(bindingData: HttpFunction_BindingData) {
+        //     return this.logOversizeBlob_path
+        //         .replace('{DateTime}', bindingData.DateTime)
+        //         .replace('{rand-guid}', bindingData['rand-guid'])
+        //         ;
+        // }
+        this.logTable_tableName_fromQueueTrigger = `log`;
+    }
+}
+exports.ServerConfig = ServerConfig;
+
+
+/***/ }),
+
+/***/ 260:
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+const client_config_1 = __webpack_require__(261);
+exports.clientConfig = new client_config_1.ClientConfig({
+    timeBatchSeconds: 10,
+    //sendLog_domain: 'https://told-stack-demo.azureedge.net',
+    sendLog_domain: 'http://localhost:7071',
+    sendLog_route: 'api/logger/send-log',
+});
+
+
+/***/ }),
+
+/***/ 261:
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+const objects_1 = __webpack_require__(68);
+class ClientConfig {
+    constructor(options) {
+        this.maxSendSize = 32 * 1024;
+        this.maxDataSize = 28 * 1024;
+        this.sendLog_domain = '/';
+        this.sendLog_route = 'api/logger/send-log';
+        this.getSendLogUrl = () => `${this.sendLog_domain}/${this.sendLog_route}`;
+        objects_1.assignPartial(this, options);
+    }
+}
+exports.ClientConfig = ClientConfig;
+
+
+/***/ }),
+
+/***/ 262:
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+const function_01_http_1 = __webpack_require__(263);
+const logger_server_1 = __webpack_require__(258);
 const run = function (...args) {
-    function_01_http_1.runFunction.apply(null, [http_input_blob_1.config, ...args]);
+    function_01_http_1.runFunction.apply(null, [logger_server_1.config, ...args]);
 };
 global.__run = run;
 module.exports = global.__run;
@@ -82,16 +165,20 @@ module.exports = global.__run;
 
 /***/ }),
 
-/***/ 291:
+/***/ 263:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
 Object.defineProperty(exports, "__esModule", { value: true });
-// Http Request: Handle Update Request
-// Blob In: Read Old Lookup Blob Value
-// Queue Out: Update Request Queue
-// Http Response: Return Old Lookup Value with Short TTL
 function createFunctionJson(config) {
     return {
         bindings: [
@@ -108,11 +195,11 @@ function createFunctionJson(config) {
                 direction: "out"
             },
             {
-                name: "inInputBlob",
-                type: "blob",
-                direction: "in",
-                path: config.inputBlob_path,
-                connection: config.inputBlob_connection
+                name: "outLogQueue",
+                type: "queue",
+                direction: "out",
+                queueName: config.logQueue_queueName,
+                connection: config.storageConnection
             },
         ],
         disabled: false
@@ -120,55 +207,46 @@ function createFunctionJson(config) {
 }
 exports.createFunctionJson = createFunctionJson;
 function runFunction(config, context, req) {
-    const data = context.bindings.inInputBlob;
-    context.log('http-input-blob', data);
-    context.res = {
-        body: data,
-        headers: {
-            'Content-Type': config.responseOptions.contentType || 'application/json',
-            'Content-Encoding': config.responseOptions.contentEncoding || undefined,
-            'Cache-Control': config.responseOptions.cacheControl || undefined,
+    return __awaiter(this, void 0, void 0, function* () {
+        context.log('START');
+        // Handle Max Queue Size (64kb) -> Put in a blob
+        const items = req.body;
+        if (!items) {
+            context.res = {
+                body: {
+                    error: 'No Items Sent'
+                },
+                headers: {
+                    'Content-Type': 'application/json',
+                }
+            };
+            context.log('DONE');
+            context.done();
+            return;
         }
-    };
-    context.done();
+        context.log(`Received ${items.length} log items`);
+        // if (JSON.stringify(items).length < this.config.maxQueueSize) {
+        context.bindings.outLogQueue = { items };
+        context.log(`Stored in Queue`);
+        // } else {
+        //     context.bindings.outLogOversizeBlob = { items };
+        //     context.bindings.outLogOversizeQueue = config.getLogOversizeBlobName(context.bindingData);
+        //     context.log(`Stored in Oversize Blob`);
+        // }
+        context.res = {
+            body: {
+                ok: true
+            },
+            headers: {
+                'Content-Type': 'application/json',
+            }
+        };
+        context.log('DONE');
+        context.done();
+    });
 }
 exports.runFunction = runFunction;
 ;
-
-
-/***/ }),
-
-/***/ 292:
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-const config_1 = __webpack_require__(293);
-exports.config = new config_1.Config();
-
-
-/***/ }),
-
-/***/ 293:
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-const objects_1 = __webpack_require__(68);
-class Config {
-    constructor(options = {}) {
-        this.http_routeRoot = 'api/http-input-blob';
-        this.default_storageConnectionString_AppSettingName = 'AZURE_STORAGE_CONNECTION_STRING';
-        this.responseOptions = {};
-        this.http_route = this.http_routeRoot + '/{container}/{*blob}';
-        this.inputBlob_path = '{container}/{blob}';
-        this.inputBlob_connection = this.default_storageConnectionString_AppSettingName;
-        objects_1.assignPartial(this, options);
-    }
-}
-exports.Config = Config;
 
 
 /***/ }),

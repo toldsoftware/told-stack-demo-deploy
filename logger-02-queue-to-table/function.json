@@ -1,0 +1,19 @@
+{
+ "bindings": [
+  {
+   "name": "inLogQueue",
+   "type": "queueTrigger",
+   "direction": "in",
+   "queueName": "log",
+   "connection": "AZURE_STORAGE_CONNECTION_STRING"
+  },
+  {
+   "name": "outLogTable",
+   "type": "table",
+   "direction": "out",
+   "tableName": "log",
+   "connection": "AZURE_STORAGE_CONNECTION_STRING"
+  }
+ ],
+ "disabled": false
+}
