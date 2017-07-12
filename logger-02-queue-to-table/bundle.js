@@ -84,6 +84,8 @@ exports.config = new server_config_1.ServerConfig(logger_client_1.clientConfig);
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
+const left_pad_1 = __webpack_require__(267);
+const rand_1 = __webpack_require__(266);
 class ServerConfig {
     // logTable_partitionKey_fromQueueTrigger = `{}`;
     // logTable_rowKey_fromQueueTrigger = ``;
@@ -102,6 +104,12 @@ class ServerConfig {
         //         ;
         // }
         this.logTable_tableName_fromQueueTrigger = `log`;
+    }
+    getPartitionKey(item) {
+        return `${item.userInfo.sessionId}`;
+    }
+    getRowKey(item) {
+        return `${item.userInfo.userId}_t-${left_pad_1.leftPad(item.runTime, 10, '-')}_r-${rand_1.randHex(4)}`;
     }
 }
 exports.ServerConfig = ServerConfig;
@@ -179,8 +187,6 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const rand_1 = __webpack_require__(266);
-const left_pad_1 = __webpack_require__(267);
 // Queue Trigger: Update Request Queue
 // Table In-Out: Changing Blob Singleton Check
 // Queue Out: Update Execute Queue Only Once Per Stale Timeout
@@ -211,7 +217,7 @@ exports.createFunctionJson = createFunctionJson;
 function runFunction(config, context) {
     return __awaiter(this, void 0, void 0, function* () {
         context.log('START', { insertionTime: context.bindingData.insertionTime, itemsLength: context.bindings.inLogQueue.items.length });
-        context.bindings.outLogTable = context.bindings.inLogQueue.items.map(x => (Object.assign({ PartitionKey: `${x.userInfo.sessionId}`, RowKey: `${x.userInfo.userId}_t-${left_pad_1.leftPad(x.runTime, 10, '-')}_r-${rand_1.randHex(4)}` }, x)));
+        context.bindings.outLogTable = context.bindings.inLogQueue.items.map(x => (Object.assign({ PartitionKey: config.getPartitionKey(x), RowKey: config.getRowKey(x) }, x)));
         context.log('DONE');
         context.done();
     });
