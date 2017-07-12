@@ -210,7 +210,7 @@ function runFunction(config, context, req) {
     return __awaiter(this, void 0, void 0, function* () {
         context.log('START');
         // Handle Max Queue Size (64kb) -> Put in a blob
-        const items = req.body;
+        const items = JSON.parse(req.body);
         if (!items) {
             context.res = {
                 body: {
