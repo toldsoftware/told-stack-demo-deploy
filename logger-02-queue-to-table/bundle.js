@@ -209,7 +209,7 @@ exports.createFunctionJson = createFunctionJson;
 function runFunction(config, context) {
     return __awaiter(this, void 0, void 0, function* () {
         context.log('START', { insertionTime: context.bindingData.insertionTime, itemsLength: context.bindings.inLogQueue.items.length });
-        context.bindings.outLogTable = context.bindings.inLogQueue.items.map(x => (Object.assign({ PartitionKey: `${x.startTime}_${x.userInfo.sessionId}`, RowKey: `${x.userInfo.userId}_${x.time}_${Math.random}` }, x)));
+        context.bindings.outLogTable = context.bindings.inLogQueue.items.map(x => (Object.assign({ PartitionKey: `${x.startTime}_${x.userInfo.sessionId}`, RowKey: `${x.userInfo.userId}_${x.time}_${Math.random()}` }, x)));
         context.log('DONE');
         context.done();
     });
