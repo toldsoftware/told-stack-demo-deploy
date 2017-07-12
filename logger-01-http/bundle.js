@@ -84,6 +84,8 @@ exports.config = new server_config_1.ServerConfig(logger_client_1.clientConfig);
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
+const left_pad_1 = __webpack_require__(267);
+const rand_1 = __webpack_require__(266);
 class ServerConfig {
     // logTable_partitionKey_fromQueueTrigger = `{}`;
     // logTable_rowKey_fromQueueTrigger = ``;
@@ -102,6 +104,12 @@ class ServerConfig {
         //         ;
         // }
         this.logTable_tableName_fromQueueTrigger = `log`;
+    }
+    getPartitionKey(item) {
+        return `${item.userInfo.sessionId}`;
+    }
+    getRowKey(item) {
+        return `${item.userInfo.userId}_t-${left_pad_1.leftPad(item.runTime, 10, '-')}_r-${rand_1.randHex(4)}`;
     }
 }
 exports.ServerConfig = ServerConfig;
@@ -226,7 +234,23 @@ function runFunction(config, context, req) {
         }
         context.log(`Received ${items.length} log items`);
         // if (JSON.stringify(items).length < this.config.maxQueueSize) {
-        context.bindings.outLogQueue = { items };
+        const c = req;
+        const requestInfo = items.some(x => !!x.deviceInfo) ? {
+            originalUrl: c.originalUrl,
+            method: c.method,
+            query: c.query,
+            headers: c.headers
+        } : undefined;
+        const clientInfo = {
+            ip: c.headers['x-forwarded-for'],
+            userAgent: c.headers['user-agent'],
+        };
+        context.bindings.outLogQueue = {
+            items,
+            ip: clientInfo.ip,
+            userAgent: clientInfo.userAgent,
+            requestInfo,
+        };
         context.log(`Stored in Queue`);
         // } else {
         //     context.bindings.outLogOversizeBlob = { items };
@@ -247,6 +271,41 @@ function runFunction(config, context, req) {
 }
 exports.runFunction = runFunction;
 ;
+
+
+/***/ }),
+
+/***/ 266:
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+// maxLength = 64
+function randHex(length = 8) {
+    return '0000000000000000000000000000000000000000000000000000000000000000'
+        .substr(0, length).replace(/0/g, () => (0 | Math.random() * 16).toString(16));
+}
+exports.randHex = randHex;
+
+
+/***/ }),
+
+/***/ 267:
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+// Max Length 64
+function leftPad(v, length, character = '') {
+    let p = '0000000000000000000000000000000000000000000000000000000000000000';
+    if (character) {
+        p = p.replace(/0/g, character);
+    }
+    return (p + v).substr(-length);
+}
+exports.leftPad = leftPad;
 
 
 /***/ }),
@@ -311,7 +370,9 @@ function groupToArray(items, getKey) {
 exports.groupToArray = groupToArray;
 function assignPartial(t, p) {
     for (let k in p) {
-        t[k] = p[k];
+        if (p.hasOwnProperty(k)) {
+            t[k] = p[k];
+        }
     }
     return t;
 }

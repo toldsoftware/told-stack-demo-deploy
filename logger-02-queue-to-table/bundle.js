@@ -217,7 +217,10 @@ exports.createFunctionJson = createFunctionJson;
 function runFunction(config, context) {
     return __awaiter(this, void 0, void 0, function* () {
         context.log('START', { insertionTime: context.bindingData.insertionTime, itemsLength: context.bindings.inLogQueue.items.length });
-        context.bindings.outLogTable = context.bindings.inLogQueue.items.map(x => (Object.assign({ PartitionKey: config.getPartitionKey(x), RowKey: config.getRowKey(x) }, x)));
+        const ip = context.bindings.inLogQueue.ip;
+        const userAgent = context.bindings.inLogQueue.userAgent;
+        const requestInfo = context.bindings.inLogQueue.requestInfo;
+        context.bindings.outLogTable = context.bindings.inLogQueue.items.map((x, i) => (Object.assign({ PartitionKey: config.getPartitionKey(x), RowKey: config.getRowKey(x) }, x, { ip: i === 0 ? ip : undefined, userAgent: i === 0 ? userAgent : undefined, requestInfo: i === 0 ? requestInfo : undefined })));
         context.log('DONE');
         context.done();
     });
