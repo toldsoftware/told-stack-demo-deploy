@@ -179,6 +179,8 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+const rand_1 = __webpack_require__(266);
+const left_pad_1 = __webpack_require__(267);
 // Queue Trigger: Update Request Queue
 // Table In-Out: Changing Blob Singleton Check
 // Queue Out: Update Execute Queue Only Once Per Stale Timeout
@@ -209,12 +211,43 @@ exports.createFunctionJson = createFunctionJson;
 function runFunction(config, context) {
     return __awaiter(this, void 0, void 0, function* () {
         context.log('START', { insertionTime: context.bindingData.insertionTime, itemsLength: context.bindings.inLogQueue.items.length });
-        context.bindings.outLogTable = context.bindings.inLogQueue.items.map(x => (Object.assign({ PartitionKey: `${x.startTime}_${x.userInfo.sessionId}`, RowKey: `${x.userInfo.userId}_${x.time}_${Math.random()}` }, x)));
+        context.bindings.outLogTable = context.bindings.inLogQueue.items.map(x => (Object.assign({ PartitionKey: `${x.userInfo.sessionId}`, RowKey: `${x.userInfo.userId}_${left_pad_1.leftPad(x.runTime, 10)}_${rand_1.randHex(4)}` }, x)));
         context.log('DONE');
         context.done();
     });
 }
 exports.runFunction = runFunction;
+
+
+/***/ }),
+
+/***/ 266:
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+// maxLength = 64
+function randHex(length = 8) {
+    return '0000000000000000000000000000000000000000000000000000000000000000'
+        .substr(0, length).replace(/0/g, () => (0 | Math.random() * 16).toString(16));
+}
+exports.randHex = randHex;
+
+
+/***/ }),
+
+/***/ 267:
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+// Max Length 64
+function leftPad(v, length) {
+    return ('0000000000000000000000000000000000000000000000000000000000000000' + v).substr(-length);
+}
+exports.leftPad = leftPad;
 
 
 /***/ }),
