@@ -79842,12 +79842,12 @@ exports.config = new server_config_1.ServerConfig(stripe_client_1.clientConfig, 
 
 Object.defineProperty(exports, "__esModule", { value: true });
 class ServerConfig {
-    constructor(clientConfig, runtimeConfig, default_storageConnectionString_AppSettingName = 'AZURE_STORAGE_CONNECTION_STRING', stripeSecretKey_AppSettingName = 'STRIPE_SECRET_KEY', stripeWebhookEndpointSecret_AppSettingName = 'STRIPE_WEBHOOK_ENDPOINT_SECRET') {
+    constructor(clientConfig, runtimeConfig, default_storageConnectionString_AppSettingName = 'AZURE_STORAGE_CONNECTION_STRING', stripeSecretKey_AppSettingName = 'STRIPE_SECRET_KEY', stripeWebhookSigningSecret_AppSettingName = 'STRIPE_WEBHOOK_SIGNING_SECRET') {
         this.clientConfig = clientConfig;
         this.runtimeConfig = runtimeConfig;
         this.default_storageConnectionString_AppSettingName = default_storageConnectionString_AppSettingName;
         this.stripeSecretKey_AppSettingName = stripeSecretKey_AppSettingName;
-        this.stripeWebhookEndpointSecret_AppSettingName = stripeWebhookEndpointSecret_AppSettingName;
+        this.stripeWebhookSigningSecret_AppSettingName = stripeWebhookSigningSecret_AppSettingName;
         this.storageConnection = this.default_storageConnectionString_AppSettingName;
         this.submit_route = this.clientConfig.submit_route;
         this.status_route = this.clientConfig.status_route;
@@ -79869,8 +79869,8 @@ class ServerConfig {
     getStripeSecretKey() {
         return process.env[this.stripeSecretKey_AppSettingName];
     }
-    getStripeWebhookEndpointSecret() {
-        return process.env[this.stripeWebhookEndpointSecret_AppSettingName];
+    getStripeWebhookSigningSecret() {
+        return process.env[this.stripeWebhookSigningSecret_AppSettingName];
     }
 }
 exports.ServerConfig = ServerConfig;

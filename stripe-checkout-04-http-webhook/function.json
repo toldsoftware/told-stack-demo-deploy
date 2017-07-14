@@ -3,7 +3,6 @@
   {
    "name": "req",
    "type": "httpTrigger",
-   "webhookType": "genericJson",
    "direction": "in",
    "authLevel": "anonymous",
    "route": "webhook/stripe"
