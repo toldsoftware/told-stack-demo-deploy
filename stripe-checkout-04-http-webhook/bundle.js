@@ -60,63 +60,64 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 324);
+/******/ 	return __webpack_require__(__webpack_require__.s = 457);
 /******/ })
 /************************************************************************/
 /******/ ({
 
-/***/ 274:
+/***/ 261:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-const server_config_1 = __webpack_require__(275);
-const logger_client_1 = __webpack_require__(278);
-exports.config = new server_config_1.ServerConfig(logger_client_1.clientConfig);
+const server_config_1 = __webpack_require__(262);
+const stripe_client_1 = __webpack_require__(263);
+const process_stripe_checkout_1 = __webpack_require__(266);
+const runtimeConfig = {
+    processRequest: process_stripe_checkout_1.processRequest
+};
+exports.config = new server_config_1.ServerConfig(stripe_client_1.clientConfig, runtimeConfig);
 
 
 /***/ }),
 
-/***/ 275:
+/***/ 262:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-const left_pad_1 = __webpack_require__(276);
-const rand_1 = __webpack_require__(277);
 class ServerConfig {
-    constructor(clientConfig, default_storageConnectionString_AppSettingName = 'AZURE_STORAGE_CONNECTION_STRING') {
+    constructor(clientConfig, runtimeConfig, default_storageConnectionString_AppSettingName = 'AZURE_STORAGE_CONNECTION_STRING', stripeSecretKey_AppSettingName = 'STRIPE_SECRET_KEY', stripeWebhookEndpointSecret_AppSettingName = 'STRIPE_WEBHOOK_ENDPOINT_SECRET') {
         this.clientConfig = clientConfig;
+        this.runtimeConfig = runtimeConfig;
         this.default_storageConnectionString_AppSettingName = default_storageConnectionString_AppSettingName;
+        this.stripeSecretKey_AppSettingName = stripeSecretKey_AppSettingName;
+        this.stripeWebhookEndpointSecret_AppSettingName = stripeWebhookEndpointSecret_AppSettingName;
         this.storageConnection = this.default_storageConnectionString_AppSettingName;
-        this.http_route = this.clientConfig.sendLog_route;
-        this.logQueue_queueName = 'log';
-        // logOversizeQueue_queueName = 'log-oversize';
-        // logOversizeBlob_path = `log-oversize/{DateTime}_{rand-guid}.json`;
-        // getLogOversizeBlobName(bindingData: HttpFunction_BindingData) {
-        //     return this.logOversizeBlob_path
-        //         .replace('{DateTime}', bindingData.DateTime)
-        //         .replace('{rand-guid}', bindingData['rand-guid'])
-        //         ;
-        // }
-        this.logTable_tableName_fromQueueTrigger = `log`;
-        // logTable_partitionKey_fromQueueTrigger = `{}`;
-        // logTable_rowKey_fromQueueTrigger = ``;
-        this.sessionLookupTable_tableName_fromQueueTrigger = `sessionuserlookup`;
-        this.sessionLookupTable_partitionKey_fromQueueTrigger = `session-user-lookup`;
-        this.sessionLookupTable_rowKey_fromQueueTrigger = `{sessionId}`;
-        this.userLookupTable_tableName_fromQueueTrigger = `sessionuserlookup`;
-        this.userLookupTable_partitionKey_fromQueueTrigger = `user-session-lookup`;
-        this.userLookupTable_rowKey_fromQueueTrigger = `{userId}`;
+        this.submit_route = this.clientConfig.submit_route;
+        this.status_route = this.clientConfig.status_route;
+        this.webhook_route = 'webhook/stripe';
+        this.processQueue_queueName = 'stripe-checkout-request';
+        this.webhookQueue_queueName = 'stripe-webhook';
+        this.stripeCheckoutTable_tableName = `stripe`;
+        this.stripeCheckoutTable_partitionKey_fromTrigger = `{emailHash}`;
+        this.stripeCheckoutTable_rowKey_fromTrigger = `{serverCheckoutId}`;
+        this.getEmailHash = this.clientConfig.getEmailHash;
+        this.processRequest = this.runtimeConfig.processRequest;
     }
-    getPartitionKey(item) {
-        return `${item.userInfo.sessionId}`;
+    getStripeCheckoutPartitionKey(emailHash, serverCheckoutId) {
+        return emailHash;
     }
-    getRowKey(item) {
-        // Avoid Collisions in case of bot using replay values (add Random and Date)
-        return `${item.userInfo.userId}_t-${left_pad_1.leftPad(item.runTime, 10, '-')}_r-${rand_1.randHex(8)}_d-${Date.now()}`;
+    getStripeCheckoutRowKey(emailHash, serverCheckoutId) {
+        return serverCheckoutId;
+    }
+    getStripeSecretKey() {
+        return process.env[this.stripeSecretKey_AppSettingName];
+    }
+    getStripeWebhookEndpointSecret() {
+        return process.env[this.stripeWebhookEndpointSecret_AppSettingName];
     }
 }
 exports.ServerConfig = ServerConfig;
@@ -124,73 +125,68 @@ exports.ServerConfig = ServerConfig;
 
 /***/ }),
 
-/***/ 276:
+/***/ 263:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-// Max Length 64
-function leftPad(v, length, character = '') {
-    let p = '0000000000000000000000000000000000000000000000000000000000000000';
-    if (character) {
-        p = p.replace(/0/g, character);
-    }
-    return (p + v).substr(-length);
-}
-exports.leftPad = leftPad;
-
-
-/***/ }),
-
-/***/ 277:
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-// maxLength = 64
-function randHex(length = 8) {
-    return '0000000000000000000000000000000000000000000000000000000000000000'
-        .substr(0, length).replace(/0/g, () => (0 | Math.random() * 16).toString(16));
-}
-exports.randHex = randHex;
-
-
-/***/ }),
-
-/***/ 278:
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-const client_config_1 = __webpack_require__(279);
+const client_config_1 = __webpack_require__(264);
 exports.clientConfig = new client_config_1.ClientConfig({
-    timeBatchSeconds: 10,
-    sendLog_domain: 'https://told-stack-demo.azureedge.net',
-    // sendLog_domain: 'http://localhost:7071',
-    sendLog_route: 'api/logger/send-log',
+    stripePublishableKey: 'pk_test_hB4VRQY8ICsC6mVsRo8jjnIh',
+    checkoutOptions: {
+        business: {
+            name: 'Told Software',
+            imageUrl: 'https://toldstackdemo.blob.core.windows.net/images/ToldLogo128.png',
+            statementDescriptor: 'ToldSoft',
+        },
+        requirements: {
+            requireZipCode: true,
+            requireBillingAddress: true,
+        },
+        experience: {
+            allowRememberMe: true
+        },
+    },
 });
 
 
 /***/ }),
 
-/***/ 279:
+/***/ 264:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
 const objects_1 = __webpack_require__(50);
+const hash_1 = __webpack_require__(265);
 class ClientConfig {
     constructor(options) {
-        this.maxSendSize = 32 * 1024;
-        this.maxDataSize = 28 * 1024;
-        this.sendLog_domain = '/';
-        this.sendLog_route = 'api/logger/send-log';
-        this.getSendLogUrl = () => `${this.sendLog_domain}/${this.sendLog_route}`;
+        this.options = options;
+        this.domain = '/';
+        this.submit_route = 'api/stripe-checkout-submit';
+        this.status_route_partial = 'api/stripe-checkout-status';
         objects_1.assignPartial(this, options);
+    }
+    get status_route() { return `status_route_partial/{emailHash}/{serverCheckoutId}`; }
+    getSubmitTokenUrl() {
+        return `${this.domain}/${this.submit_route}`;
+    }
+    getCheckoutStatusUrl(email, serverCheckoutId) {
+        return `${this.domain}/${this.status_route}/${this.getEmailHash(email)}/${serverCheckoutId}`;
+    }
+    getEmailHash(email) {
+        return hash_1.hashEmail_partial(email);
+    }
+    getStripeChargeMetadata(options) {
+        return Object.assign({}, options.user, options.product);
+    }
+    getStripeChargeStatementDescriptor(options) {
+        return `${options.business.statementDescriptor} ${options.product.statementDescriptor}`.substr(0, 22);
+    }
+    getStripeChargeStatementDescriptor_subscription(options) {
+        return `${options.business.statementDescriptor} ${options.product.statementDescriptor_subscription}`.substr(0, 22);
     }
 }
 exports.ClientConfig = ClientConfig;
@@ -198,24 +194,34 @@ exports.ClientConfig = ClientConfig;
 
 /***/ }),
 
-/***/ 324:
+/***/ 265:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-const function_01_http_1 = __webpack_require__(325);
-const logger_server_1 = __webpack_require__(274);
-const run = function (...args) {
-    function_01_http_1.runFunction.apply(null, [logger_server_1.config, ...args]);
-};
-global.__run = run;
-module.exports = global.__run;
+function hashEmail_partial(email) {
+    const name = email
+        .substr(0, email.indexOf('@'))
+        .replace(/\./g, '_')
+        .replace(/[^a-zA-Z0-9]/g, '');
+    const h = hash(email);
+    return name + h;
+}
+exports.hashEmail_partial = hashEmail_partial;
+function hash(text) {
+    return [...text].reduce((hash, c) => {
+        const code = c.charCodeAt(0);
+        hash = ((hash << 5) - hash) + code;
+        return hash | 0;
+    }, 0);
+}
+exports.hash = hash;
 
 
 /***/ }),
 
-/***/ 325:
+/***/ 266:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -229,16 +235,58 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const objects_1 = __webpack_require__(50);
+function processRequest(request) {
+    return __awaiter(this, void 0, void 0, function* () {
+        // TODO: Do Something
+        return;
+    });
+}
+exports.processRequest = processRequest;
+
+
+/***/ }),
+
+/***/ 457:
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+const function_04_http_webhook_1 = __webpack_require__(458);
+const stripe_server_1 = __webpack_require__(261);
+const run = function (...args) {
+    function_04_http_webhook_1.runFunction.apply(null, [stripe_server_1.config, ...args]);
+};
+global.__run = run;
+module.exports = global.__run;
+
+
+/***/ }),
+
+/***/ 458:
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+Object.defineProperty(exports, "__esModule", { value: true });
 function createFunctionJson(config) {
     return {
         bindings: [
             {
                 name: "req",
                 type: "httpTrigger",
+                webhookType: "genericJson",
                 direction: "in",
                 authLevel: "anonymous",
-                route: config.http_route
+                route: config.webhook_route
             },
             {
                 name: "res",
@@ -246,10 +294,10 @@ function createFunctionJson(config) {
                 direction: "out"
             },
             {
-                name: "outLogQueue",
+                name: "outWebhookQueue",
                 type: "queue",
                 direction: "out",
-                queueName: config.logQueue_queueName,
+                queueName: config.webhookQueue_queueName,
                 connection: config.storageConnection
             },
         ],
@@ -260,52 +308,15 @@ exports.createFunctionJson = createFunctionJson;
 function runFunction(config, context, req) {
     return __awaiter(this, void 0, void 0, function* () {
         context.log('START');
-        // Handle Max Queue Size (64kb) -> Put in a blob
-        const items = JSON.parse(req.body);
-        if (!items) {
-            context.res = {
-                body: {
-                    error: 'No Items Sent'
-                },
-                headers: {
-                    'Content-Type': 'application/json',
-                }
-            };
-            context.log('DONE');
-            context.done();
-            return;
-        }
-        context.log(`Received ${items.length} log items`);
-        // if (JSON.stringify(items).length < this.config.maxQueueSize) {
-        const c = req;
-        const requestInfo = items.some(x => !!x.deviceInfo) ? {
-            originalUrl: c.originalUrl,
-            method: c.method,
-            query: c.query,
-            headers: c.headers
-        } : undefined;
-        const clientInfo = {
-            ip: c.headers['x-forwarded-for'],
-            userAgent: c.headers['user-agent'],
+        const stripeSignature = req.headers['stripe-signature'];
+        context.bindings.outWebhookQueue = {
+            body: req.body,
+            stripeSignature,
         };
-        const groupByUserId = objects_1.groupToArray(items, x => x.userInfo.userId);
-        context.bindings.outLogQueue = groupByUserId.map(g => ({
-            items: g,
-            sessionId: items[0].userInfo.sessionId || '',
-            userId: items[0].userInfo.userId || '',
-            ip: clientInfo.ip,
-            userAgent: clientInfo.userAgent,
-            requestInfo,
-        }));
-        context.log(`Stored in Queue`);
-        // } else {
-        //     context.bindings.outLogOversizeBlob = { items };
-        //     context.bindings.outLogOversizeQueue = config.getLogOversizeBlobName(context.bindingData);
-        //     context.log(`Stored in Oversize Blob`);
-        // }
         context.res = {
+            status: 200,
             body: {
-                ok: true
+                ok: true,
             },
             headers: {
                 'Content-Type': 'application/json',

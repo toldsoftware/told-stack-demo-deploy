@@ -60,19 +60,26 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 264);
+/******/ 	return __webpack_require__(__webpack_require__.s = 320);
 /******/ })
 /************************************************************************/
 /******/ ({
 
-/***/ 264:
+/***/ 30:
+/***/ (function(module, exports) {
+
+module.exports = require("fs");
+
+/***/ }),
+
+/***/ 320:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-const function_01_http_1 = __webpack_require__(265);
-const static_server_1 = __webpack_require__(266);
+const function_01_http_1 = __webpack_require__(321);
+const static_server_1 = __webpack_require__(322);
 const run = function (...args) {
     function_01_http_1.runFunction.apply(null, [static_server_1.config, ...args]);
 };
@@ -82,7 +89,7 @@ module.exports = global.__run;
 
 /***/ }),
 
-/***/ 265:
+/***/ 321:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -96,7 +103,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const fs = __webpack_require__(28);
+const fs = __webpack_require__(30);
 function createFunctionJson(config) {
     return {
         bindings: [
@@ -181,26 +188,26 @@ exports.runFunction = runFunction;
 
 /***/ }),
 
-/***/ 266:
+/***/ 322:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-const server_config_1 = __webpack_require__(267);
+const server_config_1 = __webpack_require__(323);
 exports.config = new server_config_1.ServerConfig();
 
 
 /***/ }),
 
-/***/ 267:
+/***/ 323:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-const path = __webpack_require__(37);
-const fs = __webpack_require__(28);
+const path = __webpack_require__(38);
+const fs = __webpack_require__(30);
 class ServerConfig {
     constructor(pathToStatic = '../static', apiRoute = 'api/static', default_storageConnectionString_AppSettingName = 'AZURE_STORAGE_CONNECTION_STRING') {
         this.pathToStatic = pathToStatic;
@@ -225,14 +232,7 @@ exports.ServerConfig = ServerConfig;
 
 /***/ }),
 
-/***/ 28:
-/***/ (function(module, exports) {
-
-module.exports = require("fs");
-
-/***/ }),
-
-/***/ 37:
+/***/ 38:
 /***/ (function(module, exports) {
 
 module.exports = require("path");

@@ -1,0 +1,25 @@
+{
+ "bindings": [
+  {
+   "name": "req",
+   "type": "httpTrigger",
+   "webhookType": "genericJson",
+   "direction": "in",
+   "authLevel": "anonymous",
+   "route": "webhook/stripe"
+  },
+  {
+   "name": "res",
+   "type": "http",
+   "direction": "out"
+  },
+  {
+   "name": "outWebhookQueue",
+   "type": "queue",
+   "direction": "out",
+   "queueName": "stripe-webhook",
+   "connection": "AZURE_STORAGE_CONNECTION_STRING"
+  }
+ ],
+ "disabled": false
+}

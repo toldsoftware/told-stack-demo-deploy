@@ -60,32 +60,32 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 270);
+/******/ 	return __webpack_require__(__webpack_require__.s = 326);
 /******/ })
 /************************************************************************/
 /******/ ({
 
-/***/ 258:
+/***/ 274:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-const server_config_1 = __webpack_require__(259);
-const logger_client_1 = __webpack_require__(262);
+const server_config_1 = __webpack_require__(275);
+const logger_client_1 = __webpack_require__(278);
 exports.config = new server_config_1.ServerConfig(logger_client_1.clientConfig);
 
 
 /***/ }),
 
-/***/ 259:
+/***/ 275:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-const left_pad_1 = __webpack_require__(260);
-const rand_1 = __webpack_require__(261);
+const left_pad_1 = __webpack_require__(276);
+const rand_1 = __webpack_require__(277);
 class ServerConfig {
     constructor(clientConfig, default_storageConnectionString_AppSettingName = 'AZURE_STORAGE_CONNECTION_STRING') {
         this.clientConfig = clientConfig;
@@ -115,7 +115,8 @@ class ServerConfig {
         return `${item.userInfo.sessionId}`;
     }
     getRowKey(item) {
-        return `${item.userInfo.userId}_t-${left_pad_1.leftPad(item.runTime, 10, '-')}_r-${rand_1.randHex(4)}`;
+        // Avoid Collisions in case of bot using replay values (add Random and Date)
+        return `${item.userInfo.userId}_t-${left_pad_1.leftPad(item.runTime, 10, '-')}_r-${rand_1.randHex(8)}_d-${Date.now()}`;
     }
 }
 exports.ServerConfig = ServerConfig;
@@ -123,7 +124,7 @@ exports.ServerConfig = ServerConfig;
 
 /***/ }),
 
-/***/ 260:
+/***/ 276:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -142,7 +143,7 @@ exports.leftPad = leftPad;
 
 /***/ }),
 
-/***/ 261:
+/***/ 277:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -158,13 +159,13 @@ exports.randHex = randHex;
 
 /***/ }),
 
-/***/ 262:
+/***/ 278:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-const client_config_1 = __webpack_require__(263);
+const client_config_1 = __webpack_require__(279);
 exports.clientConfig = new client_config_1.ClientConfig({
     timeBatchSeconds: 10,
     sendLog_domain: 'https://told-stack-demo.azureedge.net',
@@ -175,13 +176,13 @@ exports.clientConfig = new client_config_1.ClientConfig({
 
 /***/ }),
 
-/***/ 263:
+/***/ 279:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-const objects_1 = __webpack_require__(68);
+const objects_1 = __webpack_require__(50);
 class ClientConfig {
     constructor(options) {
         this.maxSendSize = 32 * 1024;
@@ -197,14 +198,14 @@ exports.ClientConfig = ClientConfig;
 
 /***/ }),
 
-/***/ 270:
+/***/ 326:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-const function_02_queue_to_table_1 = __webpack_require__(271);
-const logger_server_1 = __webpack_require__(258);
+const function_02_queue_to_table_1 = __webpack_require__(327);
+const logger_server_1 = __webpack_require__(274);
 const run = function (...args) {
     function_02_queue_to_table_1.runFunction.apply(null, [logger_server_1.config, ...args]);
 };
@@ -214,7 +215,7 @@ module.exports = global.__run;
 
 /***/ }),
 
-/***/ 271:
+/***/ 327:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -316,7 +317,7 @@ exports.runFunction = runFunction;
 
 /***/ }),
 
-/***/ 68:
+/***/ 50:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";

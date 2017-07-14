@@ -60,19 +60,19 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 292);
+/******/ 	return __webpack_require__(__webpack_require__.s = 352);
 /******/ })
 /************************************************************************/
 /******/ ({
 
-/***/ 292:
+/***/ 352:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-const function_01_http_1 = __webpack_require__(293);
-const http_input_blob_1 = __webpack_require__(294);
+const function_01_http_1 = __webpack_require__(353);
+const http_input_blob_1 = __webpack_require__(354);
 const run = function (...args) {
     function_01_http_1.runFunction.apply(null, [http_input_blob_1.config, ...args]);
 };
@@ -82,7 +82,7 @@ module.exports = global.__run;
 
 /***/ }),
 
-/***/ 293:
+/***/ 353:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -123,6 +123,7 @@ function runFunction(config, context, req) {
     const data = context.bindings.inInputBlob;
     context.log('http-input-blob', data);
     context.res = {
+        isRaw: true,
         body: data,
         headers: {
             'Content-Type': config.responseOptions.contentType || 'application/json',
@@ -138,25 +139,25 @@ exports.runFunction = runFunction;
 
 /***/ }),
 
-/***/ 294:
+/***/ 354:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-const config_1 = __webpack_require__(295);
+const config_1 = __webpack_require__(355);
 exports.config = new config_1.Config();
 
 
 /***/ }),
 
-/***/ 295:
+/***/ 355:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-const objects_1 = __webpack_require__(68);
+const objects_1 = __webpack_require__(50);
 class Config {
     constructor(options = {}) {
         this.http_routeRoot = 'api/http-input-blob';
@@ -173,7 +174,7 @@ exports.Config = Config;
 
 /***/ }),
 
-/***/ 68:
+/***/ 50:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -233,7 +234,9 @@ function groupToArray(items, getKey) {
 exports.groupToArray = groupToArray;
 function assignPartial(t, p) {
     for (let k in p) {
-        t[k] = p[k];
+        if (p.hasOwnProperty(k)) {
+            t[k] = p[k];
+        }
     }
     return t;
 }

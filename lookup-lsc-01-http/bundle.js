@@ -60,20 +60,20 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 304);
+/******/ 	return __webpack_require__(__webpack_require__.s = 364);
 /******/ })
 /************************************************************************/
 /******/ ({
 
-/***/ 250:
+/***/ 256:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-const server_config_1 = __webpack_require__(251);
-const client_1 = __webpack_require__(252);
-const obtain_test_blob_data_1 = __webpack_require__(254);
+const server_config_1 = __webpack_require__(257);
+const client_1 = __webpack_require__(258);
+const obtain_test_blob_data_1 = __webpack_require__(260);
 exports.config = new server_config_1.ServerConfig(client_1.clientConfig, obtain_test_blob_data_1.obtainTestBlobData);
 // // Test Fast Change
 // config.timeToLiveSeconds = 1;
@@ -83,7 +83,7 @@ exports.config = new server_config_1.ServerConfig(client_1.clientConfig, obtain_
 
 /***/ }),
 
-/***/ 251:
+/***/ 257:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -173,13 +173,13 @@ exports.ServerConfig = ServerConfig;
 
 /***/ }),
 
-/***/ 252:
+/***/ 258:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-const client_config_1 = __webpack_require__(253);
+const client_config_1 = __webpack_require__(259);
 exports.clientConfig = new client_config_1.ClientConfig({
     // lookup_domain: 'https://told-stack-demo.azurewebsites.net',
     // downloadBlob_domain: 'https://told-stack-demo.azurewebsites.net',
@@ -192,13 +192,13 @@ exports.clientConfig = new client_config_1.ClientConfig({
 
 /***/ }),
 
-/***/ 253:
+/***/ 259:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-const objects_1 = __webpack_require__(68);
+const objects_1 = __webpack_require__(50);
 class ClientConfig {
     constructor(options) {
         this.timePollSeconds = 1;
@@ -230,7 +230,7 @@ exports.ClientConfig = ClientConfig;
 
 /***/ }),
 
-/***/ 254:
+/***/ 260:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -260,14 +260,14 @@ exports.obtainTestBlobData = obtainTestBlobData;
 
 /***/ }),
 
-/***/ 304:
+/***/ 364:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-const function_01_http_1 = __webpack_require__(305);
-const server_1 = __webpack_require__(250);
+const function_01_http_1 = __webpack_require__(365);
+const server_1 = __webpack_require__(256);
 const run = function (...args) {
     function_01_http_1.runFunction.apply(null, [server_1.config, ...args]);
 };
@@ -277,7 +277,7 @@ module.exports = global.__run;
 
 /***/ }),
 
-/***/ 305:
+/***/ 365:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -408,7 +408,7 @@ exports.runFunction = runFunction;
 
 /***/ }),
 
-/***/ 68:
+/***/ 50:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -468,7 +468,9 @@ function groupToArray(items, getKey) {
 exports.groupToArray = groupToArray;
 function assignPartial(t, p) {
     for (let k in p) {
-        t[k] = p[k];
+        if (p.hasOwnProperty(k)) {
+            t[k] = p[k];
+        }
     }
     return t;
 }
