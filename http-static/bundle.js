@@ -60,7 +60,7 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 320);
+/******/ 	return __webpack_require__(__webpack_require__.s = 321);
 /******/ })
 /************************************************************************/
 /******/ ({
@@ -72,14 +72,14 @@ module.exports = require("fs");
 
 /***/ }),
 
-/***/ 320:
+/***/ 321:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-const function_01_http_1 = __webpack_require__(321);
-const static_server_1 = __webpack_require__(322);
+const function_01_http_1 = __webpack_require__(322);
+const static_server_1 = __webpack_require__(323);
 const run = function (...args) {
     function_01_http_1.runFunction.apply(null, [static_server_1.config, ...args]);
 };
@@ -89,7 +89,7 @@ module.exports = global.__run;
 
 /***/ }),
 
-/***/ 321:
+/***/ 322:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -126,7 +126,7 @@ function createFunctionJson(config) {
 exports.createFunctionJson = createFunctionJson;
 function runFunction(config, context, req) {
     return __awaiter(this, void 0, void 0, function* () {
-        context.log('START');
+        context.log('START', { query: req.query });
         const p = config.getPath(req);
         context.log('Reading File', { p, query: req.query });
         fs.readFile(p, (err, data) => {
@@ -188,19 +188,19 @@ exports.runFunction = runFunction;
 
 /***/ }),
 
-/***/ 322:
+/***/ 323:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-const server_config_1 = __webpack_require__(323);
+const server_config_1 = __webpack_require__(324);
 exports.config = new server_config_1.ServerConfig();
 
 
 /***/ }),
 
-/***/ 323:
+/***/ 324:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
