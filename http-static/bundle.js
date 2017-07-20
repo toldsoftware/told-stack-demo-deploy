@@ -197,7 +197,7 @@ function runFunction(config, context, req) {
             let body = data;
             if (shouldInject) {
                 const injectVars = Object.getOwnPropertyNames(process.env)
-                    .filter(k => k.indexOf(config.injectSettingsPrefix) !== 0)
+                    .filter(k => k.indexOf(config.injectSettingsPrefix) === 0)
                     .map(k => ({
                     find: k.replace(config.injectSettingsPrefix, ''),
                     replace: process.env[k],
