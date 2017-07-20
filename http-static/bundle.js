@@ -164,19 +164,23 @@ function runFunction(config, context, req) {
                 context.done();
                 return;
             }
-            let body = data;
             let type = 'text/plain';
+            let shouldInject = false;
             if (p.match('\.html$')) {
                 type = 'text/html';
+                shouldInject = true;
             }
             if (p.match('\.css$')) {
                 type = 'text/css';
+                shouldInject = true;
             }
             if (p.match('\.js$')) {
                 type = 'application/x-javascript';
+                shouldInject = true;
             }
             if (p.match('\.json$')) {
                 type = 'application/json';
+                shouldInject = true;
             }
             if (p.match('\.jpg$')) {
                 type = 'image/jpeg';
@@ -189,6 +193,28 @@ function runFunction(config, context, req) {
             }
             if (p.match('\.ico$')) {
                 type = 'image/x-icon';
+            }
+            let body = data;
+            if (shouldInject) {
+                const injectVars = Object.getOwnPropertyNames(process.env)
+                    .filter(k => k.indexOf(config.injectSettingsPrefix) !== 0)
+                    .map(k => ({
+                    find: k.replace(config.injectSettingsPrefix, ''),
+                    replace: process.env[k],
+                }));
+                context.log('injectVars', { injectVars });
+                if (injectVars.length) {
+                    let dataStr = data.toString('utf8');
+                    Object.getOwnPropertyNames(process.env).forEach(x => {
+                        if (x.indexOf(config.injectSettingsPrefix) !== 0) {
+                            return;
+                        }
+                        const find = x.replace(config.injectSettingsPrefix, '');
+                        const replace = process.env[x];
+                        dataStr = dataStr.split(find).join(replace);
+                    });
+                    body = dataStr;
+                }
             }
             context.res = {
                 isRaw: true,
@@ -229,11 +255,10 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const path = __webpack_require__(38);
 const fs = __webpack_require__(30);
 class ServerConfig {
-    constructor(pathToStatic = '../static', apiRoute = 'api/static', default_storageConnectionString_AppSettingName = 'AZURE_STORAGE_CONNECTION_STRING') {
+    constructor(injectSettingsPrefix = 'INJECT_', pathToStatic = '../static', apiRoute = 'api/static') {
+        this.injectSettingsPrefix = injectSettingsPrefix;
         this.pathToStatic = pathToStatic;
         this.apiRoute = apiRoute;
-        this.default_storageConnectionString_AppSettingName = default_storageConnectionString_AppSettingName;
-        this.storageConnection = this.default_storageConnectionString_AppSettingName;
         this.http_route = this.apiRoute;
     }
     getPath(req) {
